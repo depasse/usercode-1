@@ -11,37 +11,65 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V43::All', '')
 process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
 
 process.maxEvents = cms.untracked.PSet(
-#    input = cms.untracked.int32(-1)
-    input = cms.untracked.int32(100)
-)
-process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/005A9FC8-B4FA-E111-95B7-00215AEDFD74.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/10E458BA-8DFA-E111-A3B8-5404A6388699.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/149E28D5-6CFA-E111-BB39-003048D37560.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/2214FD4B-6BFA-E111-BEE2-002481E0DEC6.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/304F0D26-83FA-E111-9CB7-001D09F27003.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/32447A0B-85FA-E111-863E-001D09F24664.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/3606A53B-6EFA-E111-8B26-001D09F2B2CF.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/3A10933A-6EFA-E111-A729-003048D2BC42.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/5ABC64C9-82FA-E111-8F18-001D09F2AD84.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/6634203F-6EFA-E111-B760-001D09F253C0.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/68411F07-93FA-E111-86E9-BCAEC53296F7.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/6A79E568-8BFA-E111-9F3D-001D09F2447F.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/7A42E9E9-78FA-E111-A412-001D09F28F25.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/82D571A1-8EFA-E111-81D8-00237DDC5C24.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/921950B7-6EFA-E111-9AF8-5404A63886EC.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/9A5942F2-7BFA-E111-B54E-BCAEC518FF8A.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/B2A28D98-88FA-E111-9FF0-0025B3203898.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/B81CF364-6DFA-E111-911E-003048F24A04.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/BA1899BA-69FA-E111-9212-003048F024FA.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/C46CA037-6EFA-E111-8D46-001D09F24D8A.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/D4C813CF-6FFA-E111-B8FF-001D09F24303.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/E6143A03-8FFA-E111-94B7-0019B9F4A1D7.root',
-                                      '/store/data/Run2012C/MinimumBias/RECO/PromptReco-v2/000/202/299/FE8A5D0A-90FA-E111-AF91-001D09F29533.root')
-#   fileNames = cms.untracked.vstring('file:164D2525-0DFD-E111-A3A5-485B39800C3B.root')
-#   fileNames = cms.untracked.vstring('file:step3.root')
+    input = cms.untracked.int32(-1)
+#    input = cms.untracked.int32(50000)
+#    input = cms.untracked.int32(16000)
 )
 
+process.source = cms.Source("PoolSource",
+                            fileNames = cms.untracked.vstring(
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/EC98CE5C-AA7F-E211-ABC2-485B39800B98.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/F092B0CE-B27F-E211-9025-00259073E42E.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/F0A16146-AD7F-E211-9672-20CF3056171D.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/EA4084CC-A77F-E211-9CBB-00259073E4EA.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/0274B626-B27F-E211-A7F4-20CF305B04F5.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/0ABA7C26-B27F-E211-B550-00259073E42E.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/2084B5CB-B27F-E211-949F-485B3989724C.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/282B806F-AE7F-E211-9BE1-001EC9D2577D.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/06B7E803-B17F-E211-BE6E-00259073E42E.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/109DFFD4-AB7F-E211-8B89-485B39800C16.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/30FC9227-B07F-E211-ADE0-E0CB4E19F9AF.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/24AB7A8E-B47F-E211-965B-00259073E536.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/3C776A70-AE7F-E211-9B7F-485B39800B86.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/3E86A2D5-B47F-E211-BA0C-00259073E446.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/3EB504FA-B37F-E211-876A-20CF3027A5B9.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/40C957FF-C27F-E211-B1C5-E0CB4E1A1147.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/268515B7-B07F-E211-9676-485B39897256.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/4EC0DB5D-B87F-E211-9ED6-00259073E388.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/50539DCF-A97F-E211-B09A-90E6BA442F3C.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/30C47562-AC7F-E211-8821-90E6BA442F29.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/30C7A422-B57F-E211-9D04-20CF305B058C.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/5E0F32AD-AE7F-E211-B764-BCAEC54B3067.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/345D4294-B17F-E211-8ADC-00259073E42E.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/62A43681-BA7F-E211-B67A-00259073E504.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/64BF3188-B47F-E211-8E46-20CF3027A5B9.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/6C72D7A5-B37F-E211-AFA7-20CF300E9ECD.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/6EAB25F3-AA7F-E211-A75E-20CF3019DEE8.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/44EE5CC8-B77F-E211-A902-00259022277E.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/7E563943-B47F-E211-90A7-00259073E4BE.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/843B1903-B17F-E211-930A-20CF3027A577.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/8677FB9B-B67F-E211-83BD-90E6BA19A213.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/8C47AD1F-B07F-E211-BD39-20CF3056170B.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/520007E1-B17F-E211-8FC4-00259073E4AC.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/ACA67E67-B37F-E211-89C5-00259073E452.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/5A1120DD-B57F-E211-9FB3-20CF3027A631.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/B4F7B617-B37F-E211-88AA-20CF300E9ECD.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/62632879-A87F-E211-9662-20CF305B04F0.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/7AFF9D4B-B17F-E211-99F4-485B39800BA4.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/CEB8565A-AF7F-E211-BD34-E0CB4E4408DE.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/A6793961-AA7F-E211-AC24-E0CB4E19F983.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/B451914E-BB7F-E211-975C-20CF3019DF11.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/C6240ABA-B07F-E211-8D54-002618FDA194.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/C8E9CDA6-AC7F-E211-A479-485B3989723B.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/D2C08EBA-B57F-E211-BED1-20CF305B058C.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/D4CB5E00-B67F-E211-93BD-E0CB4E1A1147.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/E64AE49A-AF7F-E211-B6B2-20CF305B052D.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/D6B9AE91-AD7F-E211-B03E-BCAEC5364CBE.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/DC317A1A-AE7F-E211-9BFE-BCAEC53F6D3A.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/E42C3AEA-B17F-E211-B6DE-20CF3027A5F3.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/E4B6E8B0-AD7F-E211-9121-001EC9D2577D.root',
+    '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/E879E84C-AF7F-E211-875E-20CF305B052D.root')
+)
 
 process.level1Pattern = cms.EDFilter('HLTLevel1Pattern',
                                      L1GtReadoutRecordTag = cms.InputTag('gtDigis'),
@@ -88,9 +116,9 @@ process.ecalDigis = process.ecalEBunpacker.clone()
 process.ecalDigis.InputLabel = cms.InputTag('rawDataCollector')
 
 
-process.load("UserCode.fabiocos.EcalMinBiasAnalysis_cfi")
-process.load("UserCode.fabiocos.HcalMinBiasAnalysis_cfi")
-process.load("UserCode.fabiocos.CaloTowerAnalysis_cfi")
+process.load("usercode.fabiocos.EcalMinBiasAnalysis_cfi")
+process.load("usercode.fabiocos.HcalMinBiasAnalysis_cfi")
+process.load("usercode.fabiocos.CaloTowerAnalysis_cfi")
 
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'
@@ -102,9 +130,13 @@ process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
     
 
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(limit = cms.untracked.int32(0))
-process.MessageLogger.cerr.EcalMinimumBiasInfo = cms.untracked.PSet(limit = cms.untracked.int32(-1))
+process.MessageLogger.cerr.EcalMinimumBiasInfo = cms.untracked.PSet(limit = cms.untracked.int32(0))
 process.MessageLogger.cerr.HcalMinimumBiasInfo = cms.untracked.PSet(limit = cms.untracked.int32(-1))
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(10000)
+
+process.caloTowerAnalysis.etTh = cms.double(1.)
+process.caloTowerAnalysis.etEmTh = cms.double(0.)
+process.caloTowerAnalysis.etHadTh = cms.double(0.)
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("MinBiasAnalysis_histo.root") )
 
@@ -116,8 +148,8 @@ process.options = cms.untracked.PSet(
 process.p = cms.Path(process.hltHighLevel *
                      process.primaryVertexFilter * process.noscraping *
                      process.HBHENoiseFilter * process.eeBadScFilter *
-#                     process.ecalDigis *
-                     process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis )
+                     process.ecalDigis *
+                     process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis)
 # in MC I don't include the process.hltHighLevel in the sequence
 
 
