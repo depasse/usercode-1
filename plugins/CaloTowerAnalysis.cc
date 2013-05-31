@@ -110,6 +110,19 @@ private:
   TProfile* CTFhadSumETVSvtx_;
   TProfile* CTFtotSumETVSvtx_;
 
+  // Total 
+
+  TH1F * CTemSumETHisto_;
+  TH1F * CTtotSumETHisto_;
+  TH1F * CThadSumETHisto_;
+  TProfile* CTemSumETVSvtx_;
+  TProfile* CThadSumETVSvtx_;
+  TProfile* CTtotSumETVSvtx_;
+
+  TH1F * CTemSumRank_;
+  TH1F * CThadSumRank_;
+  TH1F * CTtotSumRank_;
+
   const int numvtx;
 
 };
@@ -178,6 +191,17 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CTFhadSumETVSvtx_ = fs->make<TProfile>( "CTFhadSumETVSvtx", "CaloTower forward had sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 500.); 
   CTFtotSumETVSvtx_ = fs->make<TProfile>( "CTFtotSumETVSvtx", "CaloTower forward tot sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 500.); 
 
+  CTemSumETHisto_ = fs->make<TH1F>( "CTemSumET", "CaloTower all em sum E_T", 500, 0., 1000. ); 
+  CThadSumETHisto_ = fs->make<TH1F>( "CThadSumET", "CaloTower all had sum E_T", 500, 0., 1000. ); 
+  CTtotSumETHisto_ = fs->make<TH1F>( "CTtotSumET", "CaloTower all tot sum E_T", 500, 0., 1000. ); 
+
+  CTemSumETVSvtx_ = fs->make<TProfile>( "CTemSumETVSvtx", "CaloTower all em sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
+  CThadSumETVSvtx_ = fs->make<TProfile>( "CThadSumETVSvtx", "CaloTower all had sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
+  CTtotSumETVSvtx_ = fs->make<TProfile>( "CTtotSumETVSvtx", "CaloTower all tot sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
+
+  CTemSumRank_ = fs->make<TH1F>( "CTemSumRank", "number of events passing sumET em 80, 140, 300", 3, 0., 3. ); 
+  CThadSumRank_ = fs->make<TH1F>( "CThadSumRank", "number of events passing sumET had 80, 140, 300", 3, 0., 3. ); 
+  CTtotSumRank_ = fs->make<TH1F>( "CTtotSumRank", "number of events passing sumET tot 80, 140, 300", 3, 0., 3. ); 
 
 }
 
@@ -221,6 +245,10 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
   std::vector<float> sumFHadET(numvtx+1,0.);
   std::vector<float> sumFTotET(numvtx+1,0.);
 
+  std::vector<float> sumEmET(numvtx+1,0.);
+  std::vector<float> sumHadET(numvtx+1,0.);
+  std::vector<float> sumTotET(numvtx+1,0.);
+
   double emSumBET = 0.;
   double hadSumBET = 0.;
   double totSumBET = 0.;
@@ -232,6 +260,10 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
   double emSumFET = 0.;
   double hadSumFET = 0.;
   double totSumFET = 0.;
+  
+  double emSumET = 0.;
+  double hadSumET = 0.;
+  double totSumET = 0.;
 
   int nCTB =0;
   int nCTE= 0;
@@ -255,6 +287,19 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
 
     if ( ! eneSelect) { continue; }
 
+    if ( std::fabs(cal->eta()) <= 3. ) {
+      if ( select ) {
+        emSumET += emET;
+        hadSumET += hadET;
+        totSumET += totET;
+      }
+      if ( (int)nVtx <= numvtx ) {
+        sumEmET[nVtx] += emET; 
+        sumHadET[nVtx] += hadET; 
+        sumTotET[nVtx] += totET; 
+      }
+    }
+    
     if ( std::fabs(cal->eta()) <= 1.48 ) {
       if ( select ) {
         nCTB++;
@@ -328,6 +373,18 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( emSumFET > 0. ) { CTFemSumETHisto_->Fill(emSumFET); }
     if ( hadSumFET > 0. ) { CTFhadSumETHisto_->Fill(hadSumFET); }
     if ( totSumFET > 0. ) { CTFtotSumETHisto_->Fill(totSumFET); }
+    if ( emSumET > 0. ) { CTemSumETHisto_->Fill(emSumET); }
+    if ( hadSumET > 0. ) { CThadSumETHisto_->Fill(hadSumET); }
+    if ( totSumET > 0. ) { CTtotSumETHisto_->Fill(totSumET); }
+    if ( emSumET > 80. ) { CTemSumRank_->Fill(0.5); }
+    if ( emSumET > 140. ) { CTemSumRank_->Fill(1.5); }
+    if ( emSumET > 300. ) { CTemSumRank_->Fill(2.5); }
+    if ( hadSumET > 80. ) { CThadSumRank_->Fill(0.5); }
+    if ( hadSumET > 140. ) { CThadSumRank_->Fill(1.5); }
+    if ( hadSumET > 300. ) { CThadSumRank_->Fill(2.5); }
+    if ( totSumET > 80. ) { CTtotSumRank_->Fill(0.5); }
+    if ( totSumET > 140. ) { CTtotSumRank_->Fill(1.5); }
+    if ( totSumET > 300. ) { CTtotSumRank_->Fill(2.5); }
   }
 
   if ( (int)nVtx <= numvtx ) {
@@ -340,6 +397,9 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( sumFEmET[nVtx] > 0. ) { CTFemSumETVSvtx_->Fill((float)nVtx,sumFEmET[nVtx]); }
     if ( sumFHadET[nVtx] > 0. ) { CTFhadSumETVSvtx_->Fill((float)nVtx,sumFHadET[nVtx]); }
     if ( sumFTotET[nVtx] > 0. ) { CTFtotSumETVSvtx_->Fill((float)nVtx,sumFTotET[nVtx]); }
+    if ( sumEmET[nVtx] > 0. ) { CTemSumETVSvtx_->Fill((float)nVtx,sumEmET[nVtx]); }
+    if ( sumHadET[nVtx] > 0. ) { CThadSumETVSvtx_->Fill((float)nVtx,sumHadET[nVtx]); }
+    if ( sumTotET[nVtx] > 0. ) { CTtotSumETVSvtx_->Fill((float)nVtx,sumTotET[nVtx]); }
   }
 
 
