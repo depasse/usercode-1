@@ -124,6 +124,8 @@ private:
   TH1F * CTtotSumRank_;
 
   const int numvtx;
+  const int nrankTh_;
+  const float minRankTh_;
 
 };
 
@@ -136,7 +138,7 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   etTh_(iPSet.getParameter<double>("etTh")),
   etEmTh_(iPSet.getParameter<double>("etEmTh")),
   etHadTh_(iPSet.getParameter<double>("etHadTh")),
-  numvtx(60)
+  numvtx(60),nrankTh_(300),minRankTh_(10.)
 {    
 
   edm::Service<TFileService> fs;
@@ -199,9 +201,11 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CThadSumETVSvtx_ = fs->make<TProfile>( "CThadSumETVSvtx", "CaloTower all had sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
   CTtotSumETVSvtx_ = fs->make<TProfile>( "CTtotSumETVSvtx", "CaloTower all tot sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
 
-  CTemSumRank_ = fs->make<TH1F>( "CTemSumRank", "number of events passing sumET em 80, 140, 300", 3, 0., 3. ); 
-  CThadSumRank_ = fs->make<TH1F>( "CThadSumRank", "number of events passing sumET had 80, 140, 300", 3, 0., 3. ); 
-  CTtotSumRank_ = fs->make<TH1F>( "CTtotSumRank", "number of events passing sumET tot 80, 140, 300", 3, 0., 3. ); 
+  float maxRankTh_ = minRankTh_+(float)nrankTh_ ;
+
+  CTemSumRank_ = fs->make<TH1F>( "CTemSumRank", "number of events passing sumET em threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  CThadSumRank_ = fs->make<TH1F>( "CThadSumRank", "number of events passing sumET had threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
+  CTtotSumRank_ = fs->make<TH1F>( "CTtotSumRank", "number of events passing sumET tot threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
 
 }
 
@@ -376,15 +380,13 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( emSumET > 0. ) { CTemSumETHisto_->Fill(emSumET); }
     if ( hadSumET > 0. ) { CThadSumETHisto_->Fill(hadSumET); }
     if ( totSumET > 0. ) { CTtotSumETHisto_->Fill(totSumET); }
-    if ( emSumET > 80. ) { CTemSumRank_->Fill(0.5); }
-    if ( emSumET > 140. ) { CTemSumRank_->Fill(1.5); }
-    if ( emSumET > 300. ) { CTemSumRank_->Fill(2.5); }
-    if ( hadSumET > 80. ) { CThadSumRank_->Fill(0.5); }
-    if ( hadSumET > 140. ) { CThadSumRank_->Fill(1.5); }
-    if ( hadSumET > 300. ) { CThadSumRank_->Fill(2.5); }
-    if ( totSumET > 80. ) { CTtotSumRank_->Fill(0.5); }
-    if ( totSumET > 140. ) { CTtotSumRank_->Fill(1.5); }
-    if ( totSumET > 300. ) { CTtotSumRank_->Fill(2.5); }
+    
+    for ( int irank = 0; irank < nrankTh_; irank++ ) {
+      float threshold = minRankTh_+(float)irank;
+      if ( emSumET > threshold ) { CTemSumRank_->Fill(threshold+0.5); }
+      if ( hadSumET > threshold ) { CThadSumRank_->Fill(threshold+0.5); }
+      if ( totSumET > threshold ) { CTtotSumRank_->Fill(threshold+0.5); }
+    }
   }
 
   if ( (int)nVtx <= numvtx ) {
