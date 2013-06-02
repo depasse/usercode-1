@@ -287,7 +287,7 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     //    std::cout << "CT Energy " << emE << " " << hadE << " " << totE << std::endl; 
     //    std::cout << "CT ET     " << emET << " " << hadET << " " << totET << std::endl; 
 
-    bool eneSelect(totET > etTh_ || emET > etEmTh_ || hadET > etHadTh_);
+    bool eneSelect(totET >= etTh_ && emET >= etEmTh_ && hadET >= etHadTh_);
 
     if ( ! eneSelect) { continue; }
 
