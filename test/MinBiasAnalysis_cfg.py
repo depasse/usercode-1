@@ -11,9 +11,9 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V43::All', '')
 process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+#    input = cms.untracked.int32(-1)
 #    input = cms.untracked.int32(50000)
-#    input = cms.untracked.int32(16000)
+    input = cms.untracked.int32(1000)
 )
 
 process.source = cms.Source("PoolSource",
@@ -70,6 +70,9 @@ process.source = cms.Source("PoolSource",
     '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/E4B6E8B0-AD7F-E211-9121-001EC9D2577D.root',
     '/store/data/Run2012C/MinimumBias/RAW-RECO/25Feb2013-v1/10000/E879E84C-AF7F-E211-875E-20CF305B052D.root')
 )
+
+import FWCore.PythonUtilities.LumiList as LumiList
+process.source.lumisToProcess = LumiList.LumiList(filename = '202299.json').getVLuminosityBlockRange()
 
 process.level1Pattern = cms.EDFilter('HLTLevel1Pattern',
                                      L1GtReadoutRecordTag = cms.InputTag('gtDigis'),

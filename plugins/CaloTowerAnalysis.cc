@@ -123,6 +123,27 @@ private:
   TH1F * CThadSumRank_;
   TH1F * CTtotSumRank_;
 
+  // High ET tail
+
+  TH1F * vtxSumETtailHisto_;
+
+  TH1F * CTBtmultiHisto_;
+  TH1F * CTBtemETHisto_;
+  TH1F * CTBttotETHisto_;
+  TH1F * CTBthadETHisto_;
+  TH1F * CTBtemSumETHisto_;
+  TH1F * CTBttotSumETHisto_;
+  TH1F * CTBthadSumETHisto_;
+
+  TH1F * CTEtmultiHisto_;
+  TH1F * CTEtemETHisto_;
+  TH1F * CTEttotETHisto_;
+  TH1F * CTEthadETHisto_;
+  TH1F * CTEtemSumETHisto_;
+  TH1F * CTEttotSumETHisto_;
+  TH1F * CTEthadSumETHisto_;
+
+
   const int numvtx;
   const int nrankTh_;
   const float minRankTh_;
@@ -206,6 +227,26 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CTemSumRank_ = fs->make<TH1F>( "CTemSumRank", "number of events passing sumET em threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
   CThadSumRank_ = fs->make<TH1F>( "CThadSumRank", "number of events passing sumET had threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
   CTtotSumRank_ = fs->make<TH1F>( "CTtotSumRank", "number of events passing sumET tot threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
+
+  vtxSumETtailHisto_ = fs->make<TH1F>( "vtxSumETtail", "vertex ndof.gt.4 multiplicity high ET tail", 100, 0., 100. ) ;
+
+  CTBtmultiHisto_ = fs->make<TH1F>( "CTBtmulti", "CaloTower barrel high ET tail multiplicity", 60, 0., 3000. ); 
+
+  CTBtemETHisto_ = fs->make<TH1F>( "CTBtemET", "CaloTower barrel high ET tail em E_T", 500, 0., 50. ); 
+  CTBthadETHisto_ = fs->make<TH1F>( "CTBthadET", "CaloTower barrel high ET tail had E_T", 500, 0., 50. ); 
+  CTBttotETHisto_ = fs->make<TH1F>( "CTBttotET", "CaloTower barrel high ET tail tot E_T", 500, 0., 50. ); 
+  CTBtemSumETHisto_ = fs->make<TH1F>( "CTBtemSumET", "CaloTower barrel high ET tail em sum E_T", 500, 0., 500. ); 
+  CTBthadSumETHisto_ = fs->make<TH1F>( "CTBthadSumET", "CaloTower barrel high ET tail had sum E_T", 500, 0., 500. ); 
+  CTBttotSumETHisto_ = fs->make<TH1F>( "CTBttotSumET", "CaloTower barrel high ET tail tot sum E_T", 500, 0., 500. ); 
+
+  CTEtmultiHisto_ = fs->make<TH1F>( "CTEtmulti", "CaloTower barrel high ET tail multiplicity", 60, 0., 3000. ); 
+
+  CTEtemETHisto_ = fs->make<TH1F>( "CTEtemET", "CaloTower barrel high ET tail em E_T", 500, 0., 50. ); 
+  CTEthadETHisto_ = fs->make<TH1F>( "CTEthadET", "CaloTower barrel high ET tail had E_T", 500, 0., 50. ); 
+  CTEttotETHisto_ = fs->make<TH1F>( "CTEttotET", "CaloTower barrel high ET tail tot E_T", 500, 0., 50. ); 
+  CTEtemSumETHisto_ = fs->make<TH1F>( "CTEtemSumET", "CaloTower barrel high ET tail em sum E_T", 500, 0., 500. ); 
+  CTEthadSumETHisto_ = fs->make<TH1F>( "CTEthadSumET", "CaloTower barrel high ET tail had sum E_T", 500, 0., 500. ); 
+  CTEttotSumETHisto_ = fs->make<TH1F>( "CTEttotSumET", "CaloTower barrel high ET tail tot sum E_T", 500, 0., 500. ); 
 
 }
 
@@ -404,6 +445,38 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( sumTotET[nVtx] > 0. ) { CTtotSumETVSvtx_->Fill((float)nVtx,sumTotET[nVtx]); }
   }
 
+  // High sumET tail
+
+  if ( totSumET > 200. ) {
+    vtxSumETtailHisto_->Fill((float)nVtx);
+    CTBtmultiHisto_->Fill(nCTB); 
+    CTEtmultiHisto_->Fill(nCTE); 
+    CTBtemSumETHisto_->Fill(emSumBET); 
+    CTBthadSumETHisto_->Fill(hadSumBET); 
+    CTBtotSumETHisto_->Fill(totSumBET); 
+    CTEtemSumETHisto_->Fill(emSumEET); 
+    CTEthadSumETHisto_->Fill(hadSumEET); 
+    CTEttotSumETHisto_->Fill(totSumEET); 
+
+    for (CaloTowerCollection::const_iterator cal = towers->begin(); cal != towers->end() ; ++cal) {
+      
+      double emET = cal->emEt();
+      double hadET = cal->hadEt();
+      double totET = cal->et();
+
+      if ( std::fabs(cal->eta()) <= 1.48 ) {
+        CTBtemETHisto_->Fill(emET);
+        CTBthadETHisto_->Fill(hadET);
+        CTBttotETHisto_->Fill(totET);
+      }
+      else if ( std::fabs(cal->eta()) > 1.48 && std::fabs(cal->eta()) <= 3.) {
+        CTEtemETHisto_->Fill(emET);
+        CTEthadETHisto_->Fill(hadET);
+        CTEttotETHisto_->Fill(totET);
+      }
+    }
+
+  }
 
 }//analyze
 
