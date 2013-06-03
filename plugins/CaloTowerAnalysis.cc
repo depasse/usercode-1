@@ -262,13 +262,15 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   truePUorigHisto_ = fs->make<TH1F>( "truePUorig", "True PU distribution original", 100, 0., 100. );
   truePUreweHisto_ = fs->make<TH1F>( "truePUrewe", "True PU distribution reweighted", 100, 0., 100. );
   weightHisto_ = fs->make<TH1F>( "weight", "PU weight distribution", 100, 0., 10. );
-  
-  puSummaryCollection_ = iPSet.getUntrackedParameter<edm::InputTag>("puSummaryCollection",edm::InputTag("addPileupInfo","",""));
-  dataPUFile = iPSet.getUntrackedParameter<std::string>("dataPUFile",std::string("dataPU.root"));
-  mcPUFile = iPSet.getUntrackedParameter<std::string>("mcPUFile",std::string("mcPU.root"));
-  dataPUHisto = iPSet.getUntrackedParameter<std::string>("dataPUHisto",std::string("pileup"));
-  mcPUHisto = iPSet.getUntrackedParameter<std::string>("mcPUHisto",std::string("monitorPUSummaryInfo/nTruePU"));
-  theLumiW_ = new LumiReWeighting(mcPUFile,dataPUFile,mcPUHisto,dataPUHisto);
+
+  if ( iPSet.exists( "PUrew" ) ) {
+    puSummaryCollection_ = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<edm::InputTag>("puSummaryCollection");
+    dataPUFile = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("dataPUFile");
+    mcPUFile = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("mcPUFile");
+    dataPUHisto = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("dataPUHisto");
+    mcPUHisto = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("mcPUHisto");
+    theLumiW_ = new LumiReWeighting(mcPUFile,dataPUFile,mcPUHisto,dataPUHisto);
+  }
 
 }
 

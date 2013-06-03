@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("ecalMinBiasAnalysis")
+process = cms.Process("MinBiasAnalysis")
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
@@ -11,7 +11,8 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'START53_V15A::All', '')
 process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(200000)
+#    input = cms.untracked.int32(200000)
+input = cms.untracked.int32(1000)
 )
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
@@ -113,10 +114,19 @@ process.ecalDigis.InputLabel = cms.InputTag('rawDataCollector')
 
 process.load("usercode.fabiocos.EcalMinBiasAnalysis_cfi")
 process.load("usercode.fabiocos.HcalMinBiasAnalysis_cfi")
-process.load("usercode.fabiocos.CaloTowerAnalysis_cfi")
 
-process.caloTowerAnalysis.dataPUFile = cms.untracked.string("202299_truePileUpHisto.root")
-process.caloTowerAnalysis.mcPUFile = cms.untracked.string("monitorPUSummaryInfo_histo.root")
+from usercode.fabiocos.CaloTowerAnalysis_cfi import stdPset
+
+process.caloTowerAnalysis = cms.EDAnalyzer("CaloTowerAnalysis",
+    stdPset,
+    PUrew = cms.PSet(
+        puSummaryCollection = cms.untracked.InputTag("addPileupInfo","",""),
+        dataPUFile = cms.untracked.string("202299_truePileUpHisto.root"),
+        mcPUFile = cms.untracked.string("monitorPUSummaryInfo_histo.root"),
+        dataPUHisto = cms.untracked.string("pileup"),
+        mcPUHisto = cms.untracked.string("monitorPUSummaryInfo/nTruePU")
+    )
+)
 
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'
