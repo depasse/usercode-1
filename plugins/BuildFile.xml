@@ -16,6 +16,7 @@
 <use   name="RecoLocalCalo/HcalRecAlgos"/>
 <use   name="TrackingTools/TransientTrackingRecHit"/>
 <use   name="Geometry/CaloGeometry"/>
+<use   name="PhysicsTools/Utilities"/>
 <use   name="hepmc"/>
 <use   name="clhep"/>
 <use   name="root"/>

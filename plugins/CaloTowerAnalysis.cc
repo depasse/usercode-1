@@ -33,6 +33,8 @@
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #include "CLHEP/Vector/ThreeVector.h"
 
@@ -143,10 +145,17 @@ private:
   TH1F * CTEttotSumETHisto_;
   TH1F * CTEthadSumETHisto_;
 
-
   const int numvtx;
   const int nrankTh_;
   const float minRankTh_;
+
+  edm::LumiReWeighting * theLumiW_;
+  edm::InputTag puSummaryCollection_;
+  std::string dataPUFile,mcPUFile,dataPUHisto,mcPUHisto;
+
+  TH1F * truePUorigHisto_;
+  TH1F * truePUreweHisto_;
+  TH1F * weightHisto_;
 
 };
 
@@ -248,6 +257,19 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CTEthadSumETHisto_ = fs->make<TH1F>( "CTEthadSumET", "CaloTower barrel high ET tail had sum E_T", 500, 0., 500. ); 
   CTEttotSumETHisto_ = fs->make<TH1F>( "CTEttotSumET", "CaloTower barrel high ET tail tot sum E_T", 500, 0., 500. ); 
 
+  // Luminosity reweighting for simulation
+
+  truePUorigHisto_ = fs->make<TH1F>( "truePUorig", "True PU distribution original", 100, 0., 100. );
+  truePUreweHisto_ = fs->make<TH1F>( "truePUrewe", "True PU distribution reweighted", 100, 0., 100. );
+  weightHisto_ = fs->make<TH1F>( "weight", "PU weight distribution", 100, 0., 10. );
+  
+  puSummaryCollection_ = iPSet.getUntrackedParameter<edm::InputTag>("puSummaryCollection",edm::InputTag("addPileupInfo","",""));
+  dataPUFile = iPSet.getUntrackedParameter<std::string>("dataPUFile",std::string("dataPU.root"));
+  mcPUFile = iPSet.getUntrackedParameter<std::string>("mcPUFile",std::string("mcPU.root"));
+  dataPUHisto = iPSet.getUntrackedParameter<std::string>("dataPUHisto",std::string("pileup"));
+  mcPUHisto = iPSet.getUntrackedParameter<std::string>("mcPUHisto",std::string("monitorPUSummaryInfo/nTruePU"));
+  theLumiW_ = new LumiReWeighting(mcPUFile,dataPUFile,mcPUHisto,dataPUHisto);
+
 }
 
 CaloTowerAnalysis::~CaloTowerAnalysis() {}
@@ -264,6 +286,37 @@ void CaloTowerAnalysis::endRun(const edm::Run& iRun,const edm::EventSetup& iSetu
 void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSetup)
 { 
 
+  // if simulation, perform pileup reweighting
+
+  float theWeight = 1.;
+  if ( ! iEvent.isRealData() ) {
+    edm::Handle<std::vector< PileupSummaryInfo> > puSummary;
+    iEvent.getByLabel(puSummaryCollection_, puSummary );
+    
+    std::vector<PileupSummaryInfo>::const_iterator PVI;
+
+    float Tnpv = -1;
+    for(PVI = puSummary->begin(); PVI != puSummary->end(); ++PVI) {
+
+      int BX = PVI->getBunchCrossing();
+
+      if(BX == 0) { 
+        Tnpv = PVI->getTrueNumInteractions();
+        continue;
+      }
+
+    }
+
+    theWeight = theLumiW_->weight( Tnpv ); 
+
+    truePUorigHisto_->Fill(Tnpv);
+    truePUreweHisto_->Fill(Tnpv,theWeight);
+    weightHisto_->Fill(theWeight);
+
+  }
+
+  // Start CaloTower analysis
+
   edm::Handle<reco::VertexCollection> vtxCollection;
   iEvent.getByLabel(recoVertexCollection_, vtxCollection );
   
@@ -272,7 +325,7 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( (*vtxCollection)[iloop].ndof() > 4 ) { nVtx++; }
   }
 
-  hvtxHisto_->Fill((float)nVtx);
+  hvtxHisto_->Fill((float)nVtx,theWeight);
 
   edm::Handle<CaloTowerCollection> towers;
   iEvent.getByLabel(caloTowerCollection_,towers);
@@ -348,12 +401,12 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( std::fabs(cal->eta()) <= 1.48 ) {
       if ( select ) {
         nCTB++;
-        CTBemEHisto_->Fill(emE);
-        CTBhadEHisto_->Fill(hadE);
-        CTBtotEHisto_->Fill(totE);
-        CTBemETHisto_->Fill(emET);
-        CTBhadETHisto_->Fill(hadET);
-        CTBtotETHisto_->Fill(totET);
+        CTBemEHisto_->Fill(emE,theWeight);
+        CTBhadEHisto_->Fill(hadE,theWeight);
+        CTBtotEHisto_->Fill(totE,theWeight);
+        CTBemETHisto_->Fill(emET,theWeight);
+        CTBhadETHisto_->Fill(hadET,theWeight);
+        CTBtotETHisto_->Fill(totET,theWeight);
         emSumBET += emET;
         hadSumBET += hadET;
         totSumBET += totET;
@@ -367,12 +420,12 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     else if ( std::fabs(cal->eta()) > 1.48 && std::fabs(cal->eta()) <= 3.) {
       if ( select ) {
         nCTE++;
-        CTEemEHisto_->Fill(emE);
-        CTEhadEHisto_->Fill(hadE);
-        CTEtotEHisto_->Fill(totE);
-        CTEemETHisto_->Fill(emET);
-        CTEhadETHisto_->Fill(hadET);
-        CTEtotETHisto_->Fill(totET);
+        CTEemEHisto_->Fill(emE,theWeight);
+        CTEhadEHisto_->Fill(hadE,theWeight);
+        CTEtotEHisto_->Fill(totE,theWeight);
+        CTEemETHisto_->Fill(emET,theWeight);
+        CTEhadETHisto_->Fill(hadET,theWeight);
+        CTEtotETHisto_->Fill(totET,theWeight);
         emSumEET += emET;
         hadSumEET += hadET;
         totSumEET += totET;
@@ -386,12 +439,12 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     else {
       if ( select ) {
         nCTF++;
-        CTFemEHisto_->Fill(emE);
-        CTFhadEHisto_->Fill(hadE);
-        CTFtotEHisto_->Fill(totE);
-        CTFemETHisto_->Fill(emET);
-        CTFhadETHisto_->Fill(hadET);
-        CTFtotETHisto_->Fill(totET);
+        CTFemEHisto_->Fill(emE,theWeight);
+        CTFhadEHisto_->Fill(hadE,theWeight);
+        CTFtotEHisto_->Fill(totE,theWeight);
+        CTFemETHisto_->Fill(emET,theWeight);
+        CTFhadETHisto_->Fill(hadET,theWeight);
+        CTFtotETHisto_->Fill(totET,theWeight);
         emSumFET += emET;
         hadSumFET += hadET;
         totSumFET += totET;
@@ -406,57 +459,57 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
   }
 
   if ( select ) {
-    if ( nCTB > 0 ) { CTBmultiHisto_->Fill(nCTB); }
-    if ( nCTE > 0 ) { CTEmultiHisto_->Fill(nCTE); }
-    if ( nCTF > 0 ) { CTFmultiHisto_->Fill(nCTF); }
-    if ( emSumBET > 0. ) { CTBemSumETHisto_->Fill(emSumBET); }
-    if ( hadSumBET > 0. ) { CTBhadSumETHisto_->Fill(hadSumBET); }
-    if ( totSumBET > 0. ) { CTBtotSumETHisto_->Fill(totSumBET); }
-    if ( emSumEET > 0. ) { CTEemSumETHisto_->Fill(emSumEET); }
-    if ( hadSumEET > 0. ) { CTEhadSumETHisto_->Fill(hadSumEET); }
-    if ( totSumEET > 0. ) { CTEtotSumETHisto_->Fill(totSumEET); }
-    if ( emSumFET > 0. ) { CTFemSumETHisto_->Fill(emSumFET); }
-    if ( hadSumFET > 0. ) { CTFhadSumETHisto_->Fill(hadSumFET); }
-    if ( totSumFET > 0. ) { CTFtotSumETHisto_->Fill(totSumFET); }
-    if ( emSumET > 0. ) { CTemSumETHisto_->Fill(emSumET); }
-    if ( hadSumET > 0. ) { CThadSumETHisto_->Fill(hadSumET); }
-    if ( totSumET > 0. ) { CTtotSumETHisto_->Fill(totSumET); }
+    if ( nCTB > 0 ) { CTBmultiHisto_->Fill(nCTB,theWeight); }
+    if ( nCTE > 0 ) { CTEmultiHisto_->Fill(nCTE,theWeight); }
+    if ( nCTF > 0 ) { CTFmultiHisto_->Fill(nCTF,theWeight); }
+    if ( emSumBET > 0. ) { CTBemSumETHisto_->Fill(emSumBET,theWeight); }
+    if ( hadSumBET > 0. ) { CTBhadSumETHisto_->Fill(hadSumBET,theWeight); }
+    if ( totSumBET > 0. ) { CTBtotSumETHisto_->Fill(totSumBET,theWeight); }
+    if ( emSumEET > 0. ) { CTEemSumETHisto_->Fill(emSumEET,theWeight); }
+    if ( hadSumEET > 0. ) { CTEhadSumETHisto_->Fill(hadSumEET,theWeight); }
+    if ( totSumEET > 0. ) { CTEtotSumETHisto_->Fill(totSumEET,theWeight); }
+    if ( emSumFET > 0. ) { CTFemSumETHisto_->Fill(emSumFET,theWeight); }
+    if ( hadSumFET > 0. ) { CTFhadSumETHisto_->Fill(hadSumFET,theWeight); }
+    if ( totSumFET > 0. ) { CTFtotSumETHisto_->Fill(totSumFET,theWeight); }
+    if ( emSumET > 0. ) { CTemSumETHisto_->Fill(emSumET,theWeight); }
+    if ( hadSumET > 0. ) { CThadSumETHisto_->Fill(hadSumET,theWeight); }
+    if ( totSumET > 0. ) { CTtotSumETHisto_->Fill(totSumET,theWeight); }
     
     for ( int irank = 0; irank < nrankTh_; irank++ ) {
       float threshold = minRankTh_+(float)irank;
-      if ( emSumET > threshold ) { CTemSumRank_->Fill(threshold+0.5); }
-      if ( hadSumET > threshold ) { CThadSumRank_->Fill(threshold+0.5); }
-      if ( totSumET > threshold ) { CTtotSumRank_->Fill(threshold+0.5); }
+      if ( emSumET > threshold ) { CTemSumRank_->Fill(threshold+0.5,theWeight); }
+      if ( hadSumET > threshold ) { CThadSumRank_->Fill(threshold+0.5,theWeight); }
+      if ( totSumET > threshold ) { CTtotSumRank_->Fill(threshold+0.5,theWeight); }
     }
   }
 
   if ( (int)nVtx <= numvtx ) {
-    if ( sumBEmET[nVtx] > 0. ) { CTBemSumETVSvtx_->Fill((float)nVtx,sumBEmET[nVtx]); }
-    if ( sumBHadET[nVtx] > 0. ) { CTBhadSumETVSvtx_->Fill((float)nVtx,sumBHadET[nVtx]); }
-    if ( sumBTotET[nVtx] > 0. ) { CTBtotSumETVSvtx_->Fill((float)nVtx,sumBTotET[nVtx]); }
-    if ( sumEEmET[nVtx] > 0. ) { CTEemSumETVSvtx_->Fill((float)nVtx,sumEEmET[nVtx]); }
-    if ( sumEHadET[nVtx] > 0. ) { CTEhadSumETVSvtx_->Fill((float)nVtx,sumEHadET[nVtx]); }
-    if ( sumETotET[nVtx] > 0. ) { CTEtotSumETVSvtx_->Fill((float)nVtx,sumETotET[nVtx]); }
-    if ( sumFEmET[nVtx] > 0. ) { CTFemSumETVSvtx_->Fill((float)nVtx,sumFEmET[nVtx]); }
-    if ( sumFHadET[nVtx] > 0. ) { CTFhadSumETVSvtx_->Fill((float)nVtx,sumFHadET[nVtx]); }
-    if ( sumFTotET[nVtx] > 0. ) { CTFtotSumETVSvtx_->Fill((float)nVtx,sumFTotET[nVtx]); }
-    if ( sumEmET[nVtx] > 0. ) { CTemSumETVSvtx_->Fill((float)nVtx,sumEmET[nVtx]); }
-    if ( sumHadET[nVtx] > 0. ) { CThadSumETVSvtx_->Fill((float)nVtx,sumHadET[nVtx]); }
-    if ( sumTotET[nVtx] > 0. ) { CTtotSumETVSvtx_->Fill((float)nVtx,sumTotET[nVtx]); }
+    if ( sumBEmET[nVtx] > 0. ) { CTBemSumETVSvtx_->Fill((float)nVtx,sumBEmET[nVtx],theWeight); }
+    if ( sumBHadET[nVtx] > 0. ) { CTBhadSumETVSvtx_->Fill((float)nVtx,sumBHadET[nVtx],theWeight); }
+    if ( sumBTotET[nVtx] > 0. ) { CTBtotSumETVSvtx_->Fill((float)nVtx,sumBTotET[nVtx],theWeight); }
+    if ( sumEEmET[nVtx] > 0. ) { CTEemSumETVSvtx_->Fill((float)nVtx,sumEEmET[nVtx],theWeight); }
+    if ( sumEHadET[nVtx] > 0. ) { CTEhadSumETVSvtx_->Fill((float)nVtx,sumEHadET[nVtx],theWeight); }
+    if ( sumETotET[nVtx] > 0. ) { CTEtotSumETVSvtx_->Fill((float)nVtx,sumETotET[nVtx],theWeight); }
+    if ( sumFEmET[nVtx] > 0. ) { CTFemSumETVSvtx_->Fill((float)nVtx,sumFEmET[nVtx],theWeight); }
+    if ( sumFHadET[nVtx] > 0. ) { CTFhadSumETVSvtx_->Fill((float)nVtx,sumFHadET[nVtx],theWeight); }
+    if ( sumFTotET[nVtx] > 0. ) { CTFtotSumETVSvtx_->Fill((float)nVtx,sumFTotET[nVtx],theWeight); }
+    if ( sumEmET[nVtx] > 0. ) { CTemSumETVSvtx_->Fill((float)nVtx,sumEmET[nVtx],theWeight); }
+    if ( sumHadET[nVtx] > 0. ) { CThadSumETVSvtx_->Fill((float)nVtx,sumHadET[nVtx],theWeight); }
+    if ( sumTotET[nVtx] > 0. ) { CTtotSumETVSvtx_->Fill((float)nVtx,sumTotET[nVtx],theWeight); }
   }
 
   // High sumET tail
 
   if ( totSumET > 200. ) {
-    vtxSumETtailHisto_->Fill((float)nVtx);
-    CTBtmultiHisto_->Fill(nCTB); 
-    CTEtmultiHisto_->Fill(nCTE); 
-    CTBtemSumETHisto_->Fill(emSumBET); 
-    CTBthadSumETHisto_->Fill(hadSumBET); 
-    CTBtotSumETHisto_->Fill(totSumBET); 
-    CTEtemSumETHisto_->Fill(emSumEET); 
-    CTEthadSumETHisto_->Fill(hadSumEET); 
-    CTEttotSumETHisto_->Fill(totSumEET); 
+    vtxSumETtailHisto_->Fill((float)nVtx,theWeight);
+    CTBtmultiHisto_->Fill(nCTB,theWeight); 
+    CTEtmultiHisto_->Fill(nCTE,theWeight); 
+    CTBtemSumETHisto_->Fill(emSumBET,theWeight); 
+    CTBthadSumETHisto_->Fill(hadSumBET,theWeight); 
+    CTBtotSumETHisto_->Fill(totSumBET,theWeight); 
+    CTEtemSumETHisto_->Fill(emSumEET,theWeight); 
+    CTEthadSumETHisto_->Fill(hadSumEET,theWeight); 
+    CTEttotSumETHisto_->Fill(totSumEET,theWeight); 
 
     for (CaloTowerCollection::const_iterator cal = towers->begin(); cal != towers->end() ; ++cal) {
       
@@ -465,14 +518,14 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
       double totET = cal->et();
 
       if ( std::fabs(cal->eta()) <= 1.48 ) {
-        CTBtemETHisto_->Fill(emET);
-        CTBthadETHisto_->Fill(hadET);
-        CTBttotETHisto_->Fill(totET);
+        CTBtemETHisto_->Fill(emET,theWeight);
+        CTBthadETHisto_->Fill(hadET,theWeight);
+        CTBttotETHisto_->Fill(totET,theWeight);
       }
       else if ( std::fabs(cal->eta()) > 1.48 && std::fabs(cal->eta()) <= 3.) {
-        CTEtemETHisto_->Fill(emET);
-        CTEthadETHisto_->Fill(hadET);
-        CTEttotETHisto_->Fill(totET);
+        CTEtemETHisto_->Fill(emET,theWeight);
+        CTEthadETHisto_->Fill(hadET,theWeight);
+        CTEttotETHisto_->Fill(totET,theWeight);
       }
     }
 
