@@ -10,7 +10,7 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('file:pu_digi.root')
 )
 
-process.load("UserCode.fabiocos.MonitorCrossingFramePlaybackInfoExtended_cfi")
+process.load("usercode.fabiocos.MonitorCrossingFramePlaybackInfoExtended_cfi")
 
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'

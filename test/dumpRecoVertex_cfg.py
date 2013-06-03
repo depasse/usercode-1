@@ -10,7 +10,7 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('file:reco.root')
 )
 
-process.load("UserCode.fabiocos.TestRecoVertex_cfi")
+process.load("usercode.fabiocos.TestRecoVertex_cfi")
 
 process.p = cms.Path(process.testRecoVertex)
 

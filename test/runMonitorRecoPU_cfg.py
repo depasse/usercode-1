@@ -10,7 +10,7 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('file:reco.root')
 )
 
-process.load("UserCode.fabiocos.MonitorRecoPU_cfi")
+process.load("usercode.fabiocos.MonitorRecoPU_cfi")
 
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'

@@ -10,6 +10,6 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('file:gen.root')
 )
 
-process.load("UserCode.fabiocos.testGenInfoProduct_cfi")
+process.load("usercode.fabiocos.testGenInfoProduct_cfi")
 
 process.p = cms.Path(process.testGenInfoProduct)

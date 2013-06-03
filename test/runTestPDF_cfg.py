@@ -22,7 +22,7 @@ process.pdfWeights = cms.EDProducer("PdfWeightProducer",
 )
 
 
-process.load("UserCode.fabiocos.testPDF_cfi")
+process.load("usercode.fabiocos.testPDF_cfi")
 
 #take the PDF from the generated events
 process.testPDF.genCollection = cms.InputTag("generator")

@@ -86,7 +86,7 @@ process.ecalDigis = process.ecalEBunpacker.clone()
 process.ecalDigis.InputLabel = cms.InputTag('rawDataCollector')
 
 
-process.load("UserCode.fabiocos.EcalMinBiasAnalysis_cfi")
+process.load("usercode.fabiocos.EcalMinBiasAnalysis_cfi")
 
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'
