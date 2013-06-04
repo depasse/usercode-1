@@ -46,6 +46,8 @@
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #include "CLHEP/Vector/ThreeVector.h"
 
@@ -95,6 +97,14 @@ private:
   const int nEta;
   const int numvtx;
 
+  edm::LumiReWeighting * theLumiW_;
+  edm::InputTag puSummaryCollection_;
+  std::string dataPUFile,mcPUFile,dataPUHisto,mcPUHisto;
+
+  TH1F * truePUorigHisto_;
+  TH1F * truePUreweHisto_;
+  TH1F * weightHisto_;
+
 };
 
 using namespace edm;
@@ -132,6 +142,21 @@ HcalMinBiasAnalysis::HcalMinBiasAnalysis(const edm::ParameterSet& iPSet):
     he5SumETvtxHisto_.push_back(fs->make<TH1F>( histo1, histo2, 500, 0., 500. )); 
   }
 
+  // Luminosity reweighting for simulation
+
+  truePUorigHisto_ = fs->make<TH1F>( "truePUorig", "True PU distribution original", 100, 0., 100. );
+  truePUreweHisto_ = fs->make<TH1F>( "truePUrewe", "True PU distribution reweighted", 100, 0., 100. );
+  weightHisto_ = fs->make<TH1F>( "weight", "PU weight distribution", 100, 0., 10. );
+
+  if ( iPSet.exists( "PUrew" ) ) {
+    puSummaryCollection_ = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<edm::InputTag>("puSummaryCollection");
+    dataPUFile = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("dataPUFile");
+    mcPUFile = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("mcPUFile");
+    dataPUHisto = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("dataPUHisto");
+    mcPUHisto = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("mcPUHisto");
+    theLumiW_ = new LumiReWeighting(mcPUFile,dataPUFile,mcPUHisto,dataPUHisto);
+  }
+
 }
 
 HcalMinBiasAnalysis::~HcalMinBiasAnalysis() {}
@@ -148,6 +173,37 @@ void HcalMinBiasAnalysis::endRun(const edm::Run& iRun,const edm::EventSetup& iSe
 void HcalMinBiasAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSetup)
 { 
 
+  // if simulation, perform pileup reweighting
+
+  float theWeight = 1.;
+  if ( ! iEvent.isRealData() ) {
+    edm::Handle<std::vector< PileupSummaryInfo> > puSummary;
+    iEvent.getByLabel(puSummaryCollection_, puSummary );
+    
+    std::vector<PileupSummaryInfo>::const_iterator PVI;
+
+    float Tnpv = -1;
+    for(PVI = puSummary->begin(); PVI != puSummary->end(); ++PVI) {
+
+      int BX = PVI->getBunchCrossing();
+
+      if(BX == 0) { 
+        Tnpv = PVI->getTrueNumInteractions();
+        continue;
+      }
+
+    }
+
+    theWeight = theLumiW_->weight( Tnpv ); 
+
+    truePUorigHisto_->Fill(Tnpv);
+    truePUreweHisto_->Fill(Tnpv,theWeight);
+    weightHisto_->Fill(theWeight);
+
+  }
+
+  // Start HCAL rec hit analysis
+
   edm::Handle<reco::VertexCollection> vtxCollection;
   iEvent.getByLabel(recoVertexCollection_, vtxCollection );
   
@@ -156,7 +212,7 @@ void HcalMinBiasAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup
     if ( (*vtxCollection)[iloop].ndof() > 4 ) { nVtx++; }
   }
 
-  hvtxHisto_->Fill((float)nVtx);
+  hvtxHisto_->Fill((float)nVtx,theWeight);
 
   unsigned int nhe = 0;
     
@@ -216,16 +272,16 @@ void HcalMinBiasAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup
       int ietaBin = (int)((float)nEta/(highEta-lowEta)*(cellEta-lowEta));
       ietaBin = (ietaBin < nEta) ? ietaBin : nEta-1; 
 
-      hehitEneAllHisto_->Fill(hE);
+      hehitEneAllHisto_->Fill(hE,theWeight);
 
       if ( hET > 0.5 ) {
         
-        hehit5EtaHisto_->Fill(cellEta);
-        hehit5EneHisto_->Fill(hE);
-        hehit5ETHisto_->Fill(hET);
-        hehit5TimeHisto_->Fill(hTime);
+        hehit5EtaHisto_->Fill(cellEta,theWeight);
+        hehit5EneHisto_->Fill(hE,theWeight);
+        hehit5ETHisto_->Fill(hET,theWeight);
+        hehit5TimeHisto_->Fill(hTime,theWeight);
         
-        he5TimeVSEneHisto_->Fill(hE,hTime);
+        he5TimeVSEneHisto_->Fill(hE,hTime,theWeight);
      
         sum5Eeta[ietaBin] += hE;
         sum5ETeta[ietaBin] += hET;
@@ -238,20 +294,20 @@ void HcalMinBiasAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup
 
   if ( (int)nVtx == vtxSel_ ) {
       
-    hemultiHisto_->Fill((float)nhe);
+    hemultiHisto_->Fill((float)nhe,theWeight);
     
-    hehit5SumETHisto_->Fill(sumh5ET[vtxSel_]);
+    hehit5SumETHisto_->Fill(sumh5ET[vtxSel_],theWeight);
     
     for ( int ibin = 0; ibin < nEta; ibin++ ) {
       float eta = lowEta+(float)ibin*(highEta-lowEta)/(float)nEta;
-      he5SumEVSeta_->Fill(eta,sum5Eeta[ibin]);
-      he5SumETVSeta_->Fill(eta,sum5ETeta[ibin]);
+      he5SumEVSeta_->Fill(eta,sum5Eeta[ibin],theWeight);
+      he5SumETVSeta_->Fill(eta,sum5ETeta[ibin],theWeight);
     }
   }
 
   if ( (int)nVtx <= numvtx ) {
-    he5SumETVSvtx_->Fill((float)nVtx,sumh5ET[nVtx]);
-    he5SumETvtxHisto_[nVtx]->Fill(sumh5ET[nVtx]);
+    he5SumETVSvtx_->Fill((float)nVtx,sumh5ET[nVtx],theWeight);
+    he5SumETvtxHisto_[nVtx]->Fill(sumh5ET[nVtx],theWeight);
   }
 
 

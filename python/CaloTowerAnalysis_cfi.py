@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-stdPset = cms.PSet(
+stdCTAnaPset = cms.PSet(
     recoVertexCollection = cms.InputTag("offlinePrimaryVertices"),
     caloTowerCollection = cms.InputTag("towerMaker"),
     vtxSel = cms.int32(20),
@@ -10,5 +10,5 @@ stdPset = cms.PSet(
 )
 
 caloTowerAnalysis = cms.EDAnalyzer("CaloTowerAnalysis",
-    stdPset
+    stdCTAnaPset
 )                                

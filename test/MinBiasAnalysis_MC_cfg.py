@@ -12,7 +12,7 @@ process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
 
 process.maxEvents = cms.untracked.PSet(
 #    input = cms.untracked.int32(200000)
-input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(1000)
 )
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
@@ -112,13 +112,37 @@ process.load('EventFilter.EcalRawToDigi.EcalUnpackerData_cfi')
 process.ecalDigis = process.ecalEBunpacker.clone()
 process.ecalDigis.InputLabel = cms.InputTag('rawDataCollector')
 
-process.load("usercode.fabiocos.EcalMinBiasAnalysis_cfi")
-process.load("usercode.fabiocos.HcalMinBiasAnalysis_cfi")
 
-from usercode.fabiocos.CaloTowerAnalysis_cfi import stdPset
+from usercode.fabiocos.EcalMinBiasAnalysis_cfi import stdEcalAnaPset
+
+process.ecalMinBiasAnalysis = cms.EDAnalyzer("EcalMinBiasAnalysis",
+    stdEcalAnaPset,
+    PUrew = cms.PSet(
+        puSummaryCollection = cms.untracked.InputTag("addPileupInfo","",""),
+        dataPUFile = cms.untracked.string("202299_truePileUpHisto.root"),
+        mcPUFile = cms.untracked.string("monitorPUSummaryInfo_histo.root"),
+        dataPUHisto = cms.untracked.string("pileup"),
+        mcPUHisto = cms.untracked.string("monitorPUSummaryInfo/nTruePU")
+    )
+)
+
+from usercode.fabiocos.HcalMinBiasAnalysis_cfi import stdHcalAnaPset
+
+process.hcalMinBiasAnalysis = cms.EDAnalyzer("HcalMinBiasAnalysis",
+    stdHcalAnaPset,
+    PUrew = cms.PSet(
+        puSummaryCollection = cms.untracked.InputTag("addPileupInfo","",""),
+        dataPUFile = cms.untracked.string("202299_truePileUpHisto.root"),
+        mcPUFile = cms.untracked.string("monitorPUSummaryInfo_histo.root"),
+        dataPUHisto = cms.untracked.string("pileup"),
+        mcPUHisto = cms.untracked.string("monitorPUSummaryInfo/nTruePU")
+    )
+)
+
+from usercode.fabiocos.CaloTowerAnalysis_cfi import stdCTAnaPset
 
 process.caloTowerAnalysis = cms.EDAnalyzer("CaloTowerAnalysis",
-    stdPset,
+    stdCTAnaPset,
     PUrew = cms.PSet(
         puSummaryCollection = cms.untracked.InputTag("addPileupInfo","",""),
         dataPUFile = cms.untracked.string("202299_truePileUpHisto.root"),
