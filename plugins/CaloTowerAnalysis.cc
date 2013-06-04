@@ -388,11 +388,9 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( ! eneSelect) { continue; }
 
     if ( std::fabs(cal->eta()) <= 3. ) {
-      if ( select ) {
-        emSumET += emET;
-        hadSumET += hadET;
-        totSumET += totET;
-      }
+      totSumET += totET;
+      emSumET += emET;
+      hadSumET += hadET;
       if ( (int)nVtx <= numvtx ) {
         sumEmET[nVtx] += emET; 
         sumHadET[nVtx] += hadET; 
@@ -503,15 +501,17 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
   // High sumET tail
 
   if ( totSumET > 200. ) {
-    vtxSumETtailHisto_->Fill((float)nVtx,theWeight);
-    CTBtmultiHisto_->Fill(nCTB,theWeight); 
-    CTEtmultiHisto_->Fill(nCTE,theWeight); 
-    CTBtemSumETHisto_->Fill(emSumBET,theWeight); 
-    CTBthadSumETHisto_->Fill(hadSumBET,theWeight); 
-    CTBtotSumETHisto_->Fill(totSumBET,theWeight); 
-    CTEtemSumETHisto_->Fill(emSumEET,theWeight); 
-    CTEthadSumETHisto_->Fill(hadSumEET,theWeight); 
-    CTEttotSumETHisto_->Fill(totSumEET,theWeight); 
+
+    double emSumBET = 0.;
+    double hadSumBET = 0.;
+    double totSumBET = 0.;
+    
+    double emSumEET = 0.;
+    double hadSumEET = 0.;
+    double totSumEET = 0.;
+    
+    int nCTB =0;
+    int nCTE= 0;
 
     for (CaloTowerCollection::const_iterator cal = towers->begin(); cal != towers->end() ; ++cal) {
       
@@ -519,17 +519,39 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
       double hadET = cal->hadEt();
       double totET = cal->et();
 
+      bool eneSelect(totET >= etTh_ && emET >= etEmTh_ && hadET >= etHadTh_);
+      
+      if ( ! eneSelect) { continue; }
+
       if ( std::fabs(cal->eta()) <= 1.48 ) {
+        nCTB++;
+        emSumBET += emET;
+        hadSumBET += hadET;
+        totSumBET += totET;
         CTBtemETHisto_->Fill(emET,theWeight);
         CTBthadETHisto_->Fill(hadET,theWeight);
         CTBttotETHisto_->Fill(totET,theWeight);
       }
       else if ( std::fabs(cal->eta()) > 1.48 && std::fabs(cal->eta()) <= 3.) {
+        nCTE++;
+        emSumEET += emET;
+        hadSumEET += hadET;
+        totSumEET += totET;
         CTEtemETHisto_->Fill(emET,theWeight);
         CTEthadETHisto_->Fill(hadET,theWeight);
         CTEttotETHisto_->Fill(totET,theWeight);
       }
     }
+
+    vtxSumETtailHisto_->Fill((float)nVtx,theWeight);
+    CTBtmultiHisto_->Fill(nCTB,theWeight); 
+    CTEtmultiHisto_->Fill(nCTE,theWeight); 
+    CTBtemSumETHisto_->Fill(emSumBET,theWeight); 
+    CTBthadSumETHisto_->Fill(hadSumBET,theWeight); 
+    CTBttotSumETHisto_->Fill(totSumBET,theWeight); 
+    CTEtemSumETHisto_->Fill(emSumEET,theWeight); 
+    CTEthadSumETHisto_->Fill(hadSumEET,theWeight); 
+    CTEttotSumETHisto_->Fill(totSumEET,theWeight); 
 
   }
 
