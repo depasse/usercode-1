@@ -175,7 +175,7 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
 
   hvtxHisto_ = fs->make<TH1F>( "vtx", "vertex ndof.gt.4 multiplicity", 100, 0., 100. ) ;
 
-  CTBmultiHisto_ = fs->make<TH1F>( "CTBmulti", "CaloTower barrel multiplicity", 60, 0., 3000. ); 
+  CTBmultiHisto_ = fs->make<TH1F>( "CTBmulti", "CaloTower barrel multiplicity", 50, 0., 200. ); 
 
   CTBemEHisto_ = fs->make<TH1F>( "CTBemE", "CaloTower barrel em energy", 100, 0., 100. ); 
   CTBhadEHisto_ = fs->make<TH1F>( "CTBhadE", "CaloTower barrel had energy", 100, 0., 100. ); 
@@ -191,7 +191,7 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CTBhadSumETVSvtx_ = fs->make<TProfile>( "CTBhadSumETVSvtx", "CaloTower barrel had sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 500.); 
   CTBtotSumETVSvtx_ = fs->make<TProfile>( "CTBtotSumETVSvtx", "CaloTower barrel tot sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 500.); 
 
-  CTEmultiHisto_ = fs->make<TH1F>( "CTEmulti", "CaloTower endcap multiplicity", 60, 0., 3000. ); 
+  CTEmultiHisto_ = fs->make<TH1F>( "CTEmulti", "CaloTower endcap multiplicity", 50, 0., 200. ); 
 
   CTEemEHisto_ = fs->make<TH1F>( "CTEemE", "CaloTower endcap em energy", 100, 0., 100. ); 
   CTEhadEHisto_ = fs->make<TH1F>( "CTEhadE", "CaloTower endcap had energy", 100, 0., 100. ); 
@@ -207,7 +207,7 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CTEhadSumETVSvtx_ = fs->make<TProfile>( "CTEhadSumETVSvtx", "CaloTower endcap had sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 500.); 
   CTEtotSumETVSvtx_ = fs->make<TProfile>( "CTEtotSumETVSvtx", "CaloTower endcap tot sum ET VS Vtx", numvtx, 0., (float)numvtx, 0., 500.); 
 
-  CTFmultiHisto_ = fs->make<TH1F>( "CTFmulti", "CaloTower forward multiplicity", 60, 0., 3000. ); 
+  CTFmultiHisto_ = fs->make<TH1F>( "CTFmulti", "CaloTower forward multiplicity", 50, 0., 200. ); 
 
   CTFemEHisto_ = fs->make<TH1F>( "CTFemE", "CaloTower forward em energy", 100, 0., 100. ); 
   CTFhadEHisto_ = fs->make<TH1F>( "CTFhadE", "CaloTower forward had energy", 100, 0., 100. ); 
@@ -239,7 +239,7 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
 
   vtxSumETtailHisto_ = fs->make<TH1F>( "vtxSumETtail", "vertex ndof.gt.4 multiplicity high ET tail", 100, 0., 100. ) ;
 
-  CTBtmultiHisto_ = fs->make<TH1F>( "CTBtmulti", "CaloTower barrel high ET tail multiplicity", 60, 0., 3000. ); 
+  CTBtmultiHisto_ = fs->make<TH1F>( "CTBtmulti", "CaloTower barrel high ET tail multiplicity", 50, 0., 200. ); 
 
   CTBtemETHisto_ = fs->make<TH1F>( "CTBtemET", "CaloTower barrel high ET tail em E_T", 500, 0., 50. ); 
   CTBthadETHisto_ = fs->make<TH1F>( "CTBthadET", "CaloTower barrel high ET tail had E_T", 500, 0., 50. ); 
@@ -248,14 +248,14 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   CTBthadSumETHisto_ = fs->make<TH1F>( "CTBthadSumET", "CaloTower barrel high ET tail had sum E_T", 500, 0., 500. ); 
   CTBttotSumETHisto_ = fs->make<TH1F>( "CTBttotSumET", "CaloTower barrel high ET tail tot sum E_T", 500, 0., 500. ); 
 
-  CTEtmultiHisto_ = fs->make<TH1F>( "CTEtmulti", "CaloTower barrel high ET tail multiplicity", 60, 0., 3000. ); 
+  CTEtmultiHisto_ = fs->make<TH1F>( "CTEtmulti", "CaloTower endcap high ET tail multiplicity", 50, 0., 200. ); 
 
-  CTEtemETHisto_ = fs->make<TH1F>( "CTEtemET", "CaloTower barrel high ET tail em E_T", 500, 0., 50. ); 
-  CTEthadETHisto_ = fs->make<TH1F>( "CTEthadET", "CaloTower barrel high ET tail had E_T", 500, 0., 50. ); 
-  CTEttotETHisto_ = fs->make<TH1F>( "CTEttotET", "CaloTower barrel high ET tail tot E_T", 500, 0., 50. ); 
-  CTEtemSumETHisto_ = fs->make<TH1F>( "CTEtemSumET", "CaloTower barrel high ET tail em sum E_T", 500, 0., 500. ); 
-  CTEthadSumETHisto_ = fs->make<TH1F>( "CTEthadSumET", "CaloTower barrel high ET tail had sum E_T", 500, 0., 500. ); 
-  CTEttotSumETHisto_ = fs->make<TH1F>( "CTEttotSumET", "CaloTower barrel high ET tail tot sum E_T", 500, 0., 500. ); 
+  CTEtemETHisto_ = fs->make<TH1F>( "CTEtemET", "CaloTower endcap high ET tail em E_T", 500, 0., 50. ); 
+  CTEthadETHisto_ = fs->make<TH1F>( "CTEthadET", "CaloTower endcap high ET tail had E_T", 500, 0., 50. ); 
+  CTEttotETHisto_ = fs->make<TH1F>( "CTEttotET", "CaloTower endcap high ET tail tot E_T", 500, 0., 50. ); 
+  CTEtemSumETHisto_ = fs->make<TH1F>( "CTEtemSumET", "CaloTower endcap high ET tail em sum E_T", 500, 0., 500. ); 
+  CTEthadSumETHisto_ = fs->make<TH1F>( "CTEthadSumET", "CaloTower endcap high ET tail had sum E_T", 500, 0., 500. ); 
+  CTEttotSumETHisto_ = fs->make<TH1F>( "CTEttotSumET", "CaloTower endcap high ET tail tot sum E_T", 500, 0., 500. ); 
 
   // Luminosity reweighting for simulation
 

@@ -169,46 +169,39 @@ root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12
 
 root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTFtotSumETVSvtx.pdf","caloTowerAnalysis","CTFtotSumETVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTemSumRank.pdf","caloTowerAnalysis","CTemSumRank",true,"E1",false,true,false,0.,0.,0.,0.,false,true,1.,0.9601,7406.,13100.,"BL")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTemSumRank.pdf","caloTowerAnalysis","CTemSumRank",true,"E1",false,true,false,0.,0.,0.,0.,false,true,1.,0.5397,7406.,13100.,"BL")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CThadSumRank.pdf","caloTowerAnalysis","CThadSumRank",true,"E1",false,true,false,0.,0.,0.,0.,false,true,1.,0.9601,7406.,13100.,"BL")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CThadSumRank.pdf","caloTowerAnalysis","CThadSumRank",true,"E1",false,true,false,0.,0.,0.,0.,false,true,1.,0.5397,7406.,13100.,"BL")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTtotSumRank.pdf","caloTowerAnalysis","CTtotSumRank",true,"E1",false,true,false,0.,0.,0.,0.,false,true,1.,0.9601,7406.,13100.,"BL")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTtotSumRank.pdf","caloTowerAnalysis","CTtotSumRank",true,"E1",false,true,false,0.,0.,0.,0.,false,true,1.,0.5397,7406.,13100.,"BL")'
 
 
 root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBtmulti.pdf","caloTowerAnalysis","CTBtmulti",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBtemET.pdf","caloTowerAnalysis","CTBtemET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBtemET.pdf","caloTowerAnalysis","CTBtemET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBthadET.pdf","caloTowerAnalysis","CTBthadET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBthadET.pdf","caloTowerAnalysis","CTBthadET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBttotET.pdf","caloTowerAnalysis","CTBttotET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBttotET.pdf","caloTowerAnalysis","CTBttotET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBtemSumET.pdf","caloTowerAnalysis","CTBtemSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBtemSumET.pdf","caloTowerAnalysis","CTBtemSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBthadSumET.pdf","caloTowerAnalysis","CTBthadSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBthadSumET.pdf","caloTowerAnalysis","CTBthadSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBttotSumET.pdf","caloTowerAnalysis","CTBttotSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTBttotSumET.pdf","caloTowerAnalysis","CTBttotSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
 root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEtmulti.pdf","caloTowerAnalysis","CTEtmulti",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEtemET.pdf","caloTowerAnalysis","CTEtemET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEtemET.pdf","caloTowerAnalysis","CTEtemET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEthadET.pdf","caloTowerAnalysis","CTEthadET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEthadET.pdf","caloTowerAnalysis","CTEthadET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEttotET.pdf","caloTowerAnalysis","CTEttotET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEttotET.pdf","caloTowerAnalysis","CTEttotET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEtemSumET.pdf","caloTowerAnalysis","CTEtemSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEtemSumET.pdf","caloTowerAnalysis","CTEtemSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEthadSumET.pdf","caloTowerAnalysis","CTEthadSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEthadSumET.pdf","caloTowerAnalysis","CTEthadSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEttotSumET.pdf","caloTowerAnalysis","CTEttotSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,7070.,13100.,7406.,13100.,"BR")'
+root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","CTEttotSumET.pdf","caloTowerAnalysis","CTEttotSumET",true,"E1",false,true,false,0.,0.,0.,0.,true,false,2096.,5663.,7406.,5663.,"BR")'
 
 root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","vtxSumETtail.pdf","caloTowerAnalysis","vtxSumETtail",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
-
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","truePUorig.pdf","caloTowerAnalysis","truePUorig",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
-
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","truePUrewe.pdf","caloTowerAnalysis","truePUrewe",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
-
-root -l -q -b 'compareMulti.C(2,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 PU -200 ns","four.root","Summer12 PU -300 ns","weight.pdf","caloTowerAnalysis","weight",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
-
