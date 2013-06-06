@@ -105,6 +105,8 @@ private:
   TH1F * truePUreweHisto_;
   TH1F * weightHisto_;
 
+  bool rewe_;
+
 };
 
 using namespace edm;
@@ -148,6 +150,7 @@ HcalMinBiasAnalysis::HcalMinBiasAnalysis(const edm::ParameterSet& iPSet):
   truePUreweHisto_ = fs->make<TH1F>( "truePUrewe", "True PU distribution reweighted", 100, 0., 100. );
   weightHisto_ = fs->make<TH1F>( "weight", "PU weight distribution", 100, 0., 10. );
 
+  rewe_ = false;
   if ( iPSet.exists( "PUrew" ) ) {
     puSummaryCollection_ = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<edm::InputTag>("puSummaryCollection");
     dataPUFile = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("dataPUFile");
@@ -155,6 +158,7 @@ HcalMinBiasAnalysis::HcalMinBiasAnalysis(const edm::ParameterSet& iPSet):
     dataPUHisto = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("dataPUHisto");
     mcPUHisto = (iPSet.getParameter<edm::ParameterSet>("PUrew")).getUntrackedParameter<std::string>("mcPUHisto");
     theLumiW_ = new LumiReWeighting(mcPUFile,dataPUFile,mcPUHisto,dataPUHisto);
+    rewe_ = true;
   }
 
 }
@@ -176,7 +180,7 @@ void HcalMinBiasAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup
   // if simulation, perform pileup reweighting
 
   float theWeight = 1.;
-  if ( ! iEvent.isRealData() ) {
+  if ( ! iEvent.isRealData() && rewe_ ) {
     edm::Handle<std::vector< PileupSummaryInfo> > puSummary;
     iEvent.getByLabel(puSummaryCollection_, puSummary );
     
