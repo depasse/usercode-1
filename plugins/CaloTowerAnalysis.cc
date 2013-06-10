@@ -125,6 +125,12 @@ private:
   TH1F * CThadSumRank_;
   TH1F * CTtotSumRank_;
 
+  TH1F * CTemEff_;
+  TH1F * CThadEff_;
+  TH1F * CTtotEff_;
+
+  TH1F * CTnormaRank_;
+
   // High ET tail
 
   TH1F * vtxSumETtailHisto_;
@@ -236,8 +242,21 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   float maxRankTh_ = minRankTh_+(float)nrankTh_ ;
 
   CTemSumRank_ = fs->make<TH1F>( "CTemSumRank", "number of events passing sumET em threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  CTemSumRank_->Sumw2();
   CThadSumRank_ = fs->make<TH1F>( "CThadSumRank", "number of events passing sumET had threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
+  CThadSumRank_->Sumw2();
   CTtotSumRank_ = fs->make<TH1F>( "CTtotSumRank", "number of events passing sumET tot threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
+  CTtotSumRank_->Sumw2();
+
+  CTemEff_ = fs->make<TH1F>( "CTemEff", "efficiency passing sumET em threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  CTemEff_->Sumw2();
+  CThadEff_ = fs->make<TH1F>( "CThadEff", "efficiency passing sumET had threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
+  CThadEff_->Sumw2();
+  CTtotEff_ = fs->make<TH1F>( "CTtotEff", "efficiency passing sumET tot threshold", nrankTh_, minRankTh_, maxRankTh_ ); 
+  CTtotEff_->Sumw2();
+
+  CTnormaRank_ = fs->make<TH1F>( "CTnormaRank", "number of events with at least 1 vtx", nrankTh_, minRankTh_, maxRankTh_ ); 
+  CTnormaRank_->Sumw2();
 
   vtxSumETtailHisto_ = fs->make<TH1F>( "vtxSumETtail", "vertex ndof.gt.4 multiplicity high ET tail", 100, 0., 100. ) ;
 
@@ -284,7 +303,6 @@ void CaloTowerAnalysis::beginJob()
 {
 }
 
-void CaloTowerAnalysis::endJob(){return;}
 void CaloTowerAnalysis::beginRun(const edm::Run& iRun,const edm::EventSetup& iSetup)
 {
 }
@@ -484,6 +502,7 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
       if ( emSumET > threshold ) { CTemSumRank_->Fill(threshold+0.5,theWeight); }
       if ( hadSumET > threshold ) { CThadSumRank_->Fill(threshold+0.5,theWeight); }
       if ( totSumET > threshold ) { CTtotSumRank_->Fill(threshold+0.5,theWeight); }
+      CTnormaRank_->Fill(threshold+0.5,theWeight); 
     }
   }
 
@@ -560,6 +579,16 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
   }
 
 }//analyze
+
+void CaloTowerAnalysis::endJob(){
+
+  CTemEff_->Divide(CTemSumRank_,CTnormaRank_,1.,1.,"B");
+  CThadEff_->Divide(CThadSumRank_,CTnormaRank_,1.,1.,"B");
+  CTtotEff_->Divide(CTtotSumRank_,CTnormaRank_,1.,1.,"B");
+
+  return;
+
+}
 
 
 //define this as a plug-in
