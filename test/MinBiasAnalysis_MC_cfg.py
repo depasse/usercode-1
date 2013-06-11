@@ -1,5 +1,81 @@
 import FWCore.ParameterSet.Config as cms
 
+# re-emulation of L1 trigger for run 202299
+
+def patchGct(process) :
+
+    print "UPDATING GCT/GT CONFIGURATION TO RUN2012C"
+    process.GlobalTag.toGet = cms.VPSet(
+        cms.PSet(record = cms.string("L1GtTriggerMenuRcd"),
+                 tag = cms.string("L1GtTriggerMenu_L1Menu_Collisions2012_v2_mc"),
+                 connect = cms.untracked.string("frontier://FrontierProd/CMS_COND_31X_L1T")
+                 ),
+        cms.PSet(record = cms.string("L1GctChannelMaskRcd"),
+                 tag = cms.string("L1GctChannelMask_AllEnergySumsMaskedFromHF_jetCentresToEta3Allowed_mc"),
+                 connect = cms.untracked.string("frontier://FrontierProd/CMS_COND_31X_L1T")
+                 ),
+        cms.PSet(record = cms.string("L1GctJetFinderParamsRcd"),
+                 tag = cms.string("L1GctJetFinderParams_GCTPhysics_2012_04_27_JetSeedThresh5GeV_mc"),
+                 connect = cms.untracked.string("frontier://FrontierProd/CMS_COND_31X_L1T")
+                 ),
+        cms.PSet(record = cms.string("L1HfRingEtScaleRcd"),
+                 tag = cms.string("L1HfRingEtScale_GCTPhysics_2012_04_27_JetSeedThresh5GeV_mc"),
+                 connect = cms.untracked.string("frontier://FrontierProd/CMS_COND_31X_L1T")
+                 ),
+        cms.PSet(record = cms.string("L1JetEtScaleRcd"),
+                 tag = cms.string("L1JetEtScale_GCTPhysics_2012_04_27_JetSeedThresh5GeV_mc"),
+                 connect = cms.untracked.string("frontier://FrontierProd/CMS_COND_31X_L1T")
+                 ),
+        cms.PSet(record = cms.string("L1HtMissScaleRcd"),
+                 tag = cms.string("L1HtMissScale_GCTPhysics_2012_04_27_JetSeedThresh5GeV_mc"),
+                 connect = cms.untracked.string("frontier://FrontierProd/CMS_COND_31X_L1T")
+                 )
+        )
+
+    process.load("Configuration.StandardSequences.RawToDigi_Data_cff")
+
+    process.load("SimCalorimetry.HcalSimProducers.hcalUnsuppressedDigis_cfi")
+    process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
+    
+    from L1Trigger.RegionalCaloTrigger.rctDigis_cfi import rctDigis
+    from L1Trigger.GlobalCaloTrigger.gctDigis_cfi import gctDigis
+    from L1Trigger.GlobalTrigger.gtDigis_cfi import gtDigis    
+
+    process.hcalReEmulDigis = process.simHcalTriggerPrimitiveDigis.clone()
+    process.rctReEmulDigis  = rctDigis.clone()
+    process.gctReEmulDigis  = gctDigis.clone()
+    process.gtReEmulDigis   = gtDigis.clone()
+    
+    process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
+    #process.HcalTPGCoderULUT.LUTGenerationMode = cms.bool(False)
+
+    process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
+    process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
+
+    process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
+    
+    process.gtReEmulDigis.GmtInputTag  = cms.InputTag("gtDigis")
+    process.gtReEmulDigis.GctInputTag  = cms.InputTag("gctReEmulDigis")
+
+#     ntuple.gctCentralJetsSource = cms.InputTag("gctReEmulDigis","cenJets")
+#     ntuple.gctNonIsoEmSource    = cms.InputTag("gctReEmulDigis","nonIsoEm")
+#     ntuple.gctForwardJetsSource = cms.InputTag("gctReEmulDigis","forJets")
+#     ntuple.gctIsoEmSource       = cms.InputTag("gctReEmulDigis","isoEm")
+#     ntuple.gctEnergySumsSource  = cms.InputTag("gctReEmulDigis","")
+#     ntuple.gctTauJetsSource     = cms.InputTag("gctReEmulDigis","tauJets")
+
+#     ntuple.gtSource = cms.InputTag("gtReEmulDigis")
+
+    process.patchGct = cms.Sequence(
+        process.ecalDigis
+        + process.hcalDigis
+        #+ process.simHcalUnsuppressedDigis
+        + process.hcalReEmulDigis
+        + process.rctReEmulDigis
+        + process.gctReEmulDigis
+        + process.gtReEmulDigis
+        )
+
 process = cms.Process("MinBiasAnalysis")
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
@@ -112,6 +188,7 @@ process.load('EventFilter.EcalRawToDigi.EcalUnpackerData_cfi')
 process.ecalDigis = process.ecalEBunpacker.clone()
 process.ecalDigis.InputLabel = cms.InputTag('rawDataCollector')
 
+patchGct(process)
 
 from usercode.fabiocos.EcalMinBiasAnalysis_cfi import stdEcalAnaPset
 
@@ -181,7 +258,7 @@ process.options = cms.untracked.PSet(
 process.p = cms.Path(
                      process.primaryVertexFilter * process.noscraping *
                      process.HBHENoiseFilter * process.eeBadScFilter *
-                     process.ecalDigis *
+#                     process.ecalDigis *
+                     process.patchGct * 
                      process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis)
 # in MC I don't include the process.hltHighLevel in the sequence
-

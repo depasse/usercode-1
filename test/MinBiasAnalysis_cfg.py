@@ -1,5 +1,42 @@
 import FWCore.ParameterSet.Config as cms
 
+# re-emulation of L1 trigger for run 202299
+
+def patchGct(process) :
+
+    process.load("Configuration.StandardSequences.RawToDigi_Data_cff")
+
+    from L1Trigger.RegionalCaloTrigger.rctDigis_cfi import rctDigis
+    from L1Trigger.GlobalCaloTrigger.gctDigis_cfi import gctDigis
+    from L1Trigger.GlobalTrigger.gtDigis_cfi import gtDigis    
+
+    process.rctReEmulDigis  = rctDigis.clone()
+    process.gctReEmulDigis  = gctDigis.clone()
+    process.gtReEmulDigis   = gtDigis.clone()
+    
+    process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
+    
+    process.gtReEmulDigis.GmtInputTag  = cms.InputTag("gtDigis")
+    process.gtReEmulDigis.GctInputTag  = cms.InputTag("gctReEmulDigis")
+
+#     ntuple.gctCentralJetsSource = cms.InputTag("gctReEmulDigis","cenJets")
+#     ntuple.gctNonIsoEmSource    = cms.InputTag("gctReEmulDigis","nonIsoEm")
+#     ntuple.gctForwardJetsSource = cms.InputTag("gctReEmulDigis","forJets")
+#     ntuple.gctIsoEmSource       = cms.InputTag("gctReEmulDigis","isoEm")
+#     ntuple.gctEnergySumsSource  = cms.InputTag("gctReEmulDigis","")
+#     ntuple.gctTauJetsSource     = cms.InputTag("gctReEmulDigis","tauJets")
+
+#     ntuple.gtSource = cms.InputTag("gtReEmulDigis")
+
+    process.patchGct = cms.Sequence(
+        process.ecalDigis
+        + process.hcalDigis
+        #+ process.simHcalUnsuppressedDigis
+        + process.rctReEmulDigis
+        + process.gctReEmulDigis
+        + process.gtReEmulDigis
+        )
+
 process = cms.Process("MinBiasAnalysis")
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
@@ -118,6 +155,7 @@ process.load('EventFilter.EcalRawToDigi.EcalUnpackerData_cfi')
 process.ecalDigis = process.ecalEBunpacker.clone()
 process.ecalDigis.InputLabel = cms.InputTag('rawDataCollector')
 
+patchGct(process)
 
 process.load("usercode.fabiocos.EcalMinBiasAnalysis_cfi")
 process.load("usercode.fabiocos.HcalMinBiasAnalysis_cfi")
@@ -151,7 +189,8 @@ process.options = cms.untracked.PSet(
 process.p = cms.Path(process.hltHighLevel *
                      process.primaryVertexFilter * process.noscraping *
                      process.HBHENoiseFilter * process.eeBadScFilter *
-                     process.ecalDigis *
+#                     process.ecalDigis *
+                     process.patchGct *
                      process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis)
 # in MC I don't include the process.hltHighLevel in the sequence
 
