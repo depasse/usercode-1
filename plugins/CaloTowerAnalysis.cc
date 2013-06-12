@@ -409,7 +409,7 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
 
     if ( ! eneSelect) { continue; }
 
-    if ( std::fabs(cal->eta()) <= 3. ) {
+    if ( std::fabs(cal->eta()) <= 3. && nVtx > 0 ) {
       totSumET += totET;
       emSumET += emET;
       hadSumET += hadET;
@@ -496,14 +496,6 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( emSumET > 0. ) { CTemSumETHisto_->Fill(emSumET,theWeight); }
     if ( hadSumET > 0. ) { CThadSumETHisto_->Fill(hadSumET,theWeight); }
     if ( totSumET > 0. ) { CTtotSumETHisto_->Fill(totSumET,theWeight); }
-    
-    for ( int irank = 0; irank < nrankTh_; irank++ ) {
-      float threshold = minRankTh_+(float)irank;
-      if ( emSumET > threshold ) { CTemSumRank_->Fill(threshold+0.5,theWeight); }
-      if ( hadSumET > threshold ) { CThadSumRank_->Fill(threshold+0.5,theWeight); }
-      if ( totSumET > threshold ) { CTtotSumRank_->Fill(threshold+0.5,theWeight); }
-      CTnormaRank_->Fill(threshold+0.5,theWeight); 
-    }
   }
 
   if ( (int)nVtx <= numvtx ) {
@@ -519,6 +511,16 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( sumEmET[nVtx] > 0. ) { CTemSumETVSvtx_->Fill((float)nVtx,sumEmET[nVtx],theWeight); }
     if ( sumHadET[nVtx] > 0. ) { CThadSumETVSvtx_->Fill((float)nVtx,sumHadET[nVtx],theWeight); }
     if ( sumTotET[nVtx] > 0. ) { CTtotSumETVSvtx_->Fill((float)nVtx,sumTotET[nVtx],theWeight); }
+  }
+    
+  if (nVtx > 0 ) {
+    for ( int irank = 0; irank < nrankTh_; irank++ ) {
+      float threshold = minRankTh_+(float)irank;
+      if ( emSumET > threshold ) { CTemSumRank_->Fill(threshold+0.5,theWeight); }
+      if ( hadSumET > threshold ) { CThadSumRank_->Fill(threshold+0.5,theWeight); }
+      if ( totSumET > threshold ) { CTtotSumRank_->Fill(threshold+0.5,theWeight); }
+      CTnormaRank_->Fill(threshold+0.5,theWeight); 
+    }
   }
 
   // High sumET tail
