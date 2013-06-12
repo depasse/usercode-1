@@ -19,19 +19,9 @@ def patchGct(process) :
     process.gtReEmulDigis.GmtInputTag  = cms.InputTag("gtDigis")
     process.gtReEmulDigis.GctInputTag  = cms.InputTag("gctReEmulDigis")
 
-#     ntuple.gctCentralJetsSource = cms.InputTag("gctReEmulDigis","cenJets")
-#     ntuple.gctNonIsoEmSource    = cms.InputTag("gctReEmulDigis","nonIsoEm")
-#     ntuple.gctForwardJetsSource = cms.InputTag("gctReEmulDigis","forJets")
-#     ntuple.gctIsoEmSource       = cms.InputTag("gctReEmulDigis","isoEm")
-#     ntuple.gctEnergySumsSource  = cms.InputTag("gctReEmulDigis","")
-#     ntuple.gctTauJetsSource     = cms.InputTag("gctReEmulDigis","tauJets")
-
-#     ntuple.gtSource = cms.InputTag("gtReEmulDigis")
-
     process.patchGct = cms.Sequence(
         process.ecalDigis
         + process.hcalDigis
-        #+ process.simHcalUnsuppressedDigis
         + process.rctReEmulDigis
         + process.gctReEmulDigis
         + process.gtReEmulDigis
@@ -160,6 +150,7 @@ patchGct(process)
 process.load("usercode.fabiocos.EcalMinBiasAnalysis_cfi")
 process.load("usercode.fabiocos.HcalMinBiasAnalysis_cfi")
 process.load("usercode.fabiocos.CaloTowerAnalysis_cfi")
+process.load("usercode.fabiocos.L1CaloAnalysis_cfi")
 
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'
@@ -178,6 +169,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(10000)
 process.caloTowerAnalysis.etTh = cms.double(1.)
 process.caloTowerAnalysis.etEmTh = cms.double(0.)
 process.caloTowerAnalysis.etHadTh = cms.double(0.)
+process.l1CaloAnalysis.etTh = cms.double(1.)
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("MinBiasAnalysis_histo.root") )
 
@@ -191,7 +183,7 @@ process.p = cms.Path(process.hltHighLevel *
                      process.HBHENoiseFilter * process.eeBadScFilter *
 #                     process.ecalDigis *
                      process.patchGct *
-                     process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis)
+                     process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis * process.l1CaloAnalysis )
 # in MC I don't include the process.hltHighLevel in the sequence
 
 

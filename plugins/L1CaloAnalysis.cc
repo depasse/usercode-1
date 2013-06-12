@@ -29,6 +29,12 @@
 #include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
 #include "DataFormats/L1GlobalCaloTrigger/interface/L1GctCollections.h"
 
+#include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
+#include "CondFormats/L1TObjects/interface/L1GtTriggerMenu.h"
+
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetupFwd.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
+
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
@@ -60,6 +66,7 @@ private:
   edm::InputTag ettCollection_; 
   edm::InputTag httCollection_; 
   edm::InputTag etmCollection_; 
+  edm::InputTag l1TrigCollection_;
 
   int vtxSel_;
   double etTh_;
@@ -96,6 +103,14 @@ private:
   TProfile* L1HTTVSvtx_;
   TProfile* L1ETMVSvtx_;
 
+  // Trigger bits
+
+  TH1F * L1TrigHisto_;
+
+  TH1F * ETTRank_;
+  TH1F * ETTEff_;
+
+  TH1F * normaRank_;
 
   const int numvtx;
   const int nrankTh_;
@@ -111,6 +126,8 @@ private:
 
   bool rewe_;
 
+  bool first_;
+
 };
 
 using namespace edm;
@@ -121,9 +138,10 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   ettCollection_(iPSet.getParameter<edm::InputTag>("ettCollection")),
   httCollection_(iPSet.getParameter<edm::InputTag>("httCollection")),
   etmCollection_(iPSet.getParameter<edm::InputTag>("etmCollection")),
+  l1TrigCollection_(iPSet.getParameter<edm::InputTag>("l1TrigCollection")),
   vtxSel_(iPSet.getParameter<int>("vtxSel")),
   etTh_(iPSet.getParameter<double>("etTh")),
-  numvtx(60),nrankTh_(300),minRankTh_(10.)
+  numvtx(60),nrankTh_(300),minRankTh_(10.),first_(true)
 {    
 
   edm::Service<TFileService> fs;
@@ -155,6 +173,18 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   L1ETTVSvtx_ = fs->make<TProfile>( "L1ETTVSvtx", "L1 ETT VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
   L1HTTVSvtx_ = fs->make<TProfile>( "L1HTTVSvtx", "L1 HTT VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
   L1ETMVSvtx_ = fs->make<TProfile>( "L1ETMVSvtx", "L1 ETM VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
+
+  L1TrigHisto_ = fs->make<TH1F>( "L1Trig", "L1 Trigger bits", 128, -.5, 127.5);
+
+  float maxRankTh_ = minRankTh_+(float)nrankTh_ ;
+
+  ETTRank_ = fs->make<TH1F>( "ETTRank", "number of events passing ETT threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  ETTRank_->Sumw2();
+  ETTEff_ = fs->make<TH1F>( "ETTEff", "efficiency passing ETT threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  ETTEff_->Sumw2();
+
+  normaRank_ = fs->make<TH1F>( "normaRank", "number of events with at least 1 vtx", nrankTh_, minRankTh_, maxRankTh_ ); 
+  normaRank_->Sumw2();
 
   // Luminosity reweighting for simulation
 
@@ -297,6 +327,61 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
 
   }
 
+  if ( nVtx > 0 ) {
+
+    edm::Handle<L1GctEtTotalCollection> et_tots;
+    iEvent.getByLabel(ettCollection_, et_tots);
+    for (L1GctEtTotalCollection::const_iterator et = et_tots->begin();
+         et != et_tots->end(); ++et) {
+      if ( et->bx() == 0 ) {
+        if ( select ) L1ETTHisto_->Fill(et->et(),theWeight);
+        L1ETTVSvtx_->Fill((float)nVtx,et->et(),theWeight);
+        
+        for ( int irank = 0; irank < nrankTh_; irank++ ) {
+          float threshold = minRankTh_+(float)irank;
+          if ( et->et() > threshold ) { ETTRank_->Fill(threshold+0.5,theWeight); }
+          normaRank_->Fill(threshold+0.5,theWeight); 
+        }
+        
+      }
+    }
+    
+    edm::Handle<L1GctEtMissCollection> et_misss;
+    iEvent.getByLabel(etmCollection_, et_misss);
+    for (L1GctEtMissCollection::const_iterator et = et_misss->begin();
+         et != et_misss->end(); ++et) {
+      if ( et->bx() == 0 ) {
+        if ( select ) L1ETMHisto_->Fill(et->et(),theWeight);
+        L1ETMVSvtx_->Fill((float)nVtx,et->et(),theWeight);
+      }
+    }
+    
+    edm::Handle<L1GctEtHadCollection> et_hads;
+    iEvent.getByLabel(httCollection_, et_hads);
+    for (L1GctEtHadCollection::const_iterator et = et_hads->begin();
+         et != et_hads->end(); ++et) {
+      if ( et->bx() == 0 ) {
+        if ( select ) L1HTTHisto_->Fill(et->et(),theWeight);
+        L1HTTVSvtx_->Fill((float)nVtx,et->et(),theWeight);
+      }
+    }
+    
+    
+    if (first_) {
+      first_ = false;
+      edm::ESHandle<L1GtTriggerMenu> l1menu;
+      iSetup.get<L1GtTriggerMenuRcd>().get(l1menu);
+      for (const auto& p: l1menu->gtAlgorithmMap())
+        L1TrigHisto_->GetXaxis()->SetBinLabel(p.second.algoBitNumber() + 1, p.first.c_str());
+    }
+    
+    edm::Handle<L1GlobalTriggerReadoutRecord> bits;
+    iEvent.getByLabel(l1TrigCollection_, bits);
+    for (int i = 0; i < 128; ++i)
+      L1TrigHisto_->Fill((float)i, bits->decisionWord()[i] * theWeight);
+    
+  }
+  
   if ( select ) {
     if ( nCRB > 0 ) { CRBmultiHisto_->Fill(nCRB,theWeight); }
     if ( nCRE > 0 ) { CREmultiHisto_->Fill(nCRE,theWeight); }
@@ -316,6 +401,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
 }//analyze
 
 void L1CaloAnalysis::endJob(){
+
+  ETTEff_->Divide(ETTRank_,normaRank_,1.,1.,"B");
 
   return;
 

@@ -4,7 +4,6 @@ import FWCore.ParameterSet.Config as cms
 
 def patchGct(process) :
 
-    print "UPDATING GCT/GT CONFIGURATION TO RUN2012C"
     process.GlobalTag.toGet = cms.VPSet(
         cms.PSet(record = cms.string("L1GtTriggerMenuRcd"),
                  tag = cms.string("L1GtTriggerMenu_L1Menu_Collisions2012_v2_mc"),
@@ -47,7 +46,6 @@ def patchGct(process) :
     process.gtReEmulDigis   = gtDigis.clone()
     
     process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
-    #process.HcalTPGCoderULUT.LUTGenerationMode = cms.bool(False)
 
     process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
     process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
@@ -57,19 +55,9 @@ def patchGct(process) :
     process.gtReEmulDigis.GmtInputTag  = cms.InputTag("gtDigis")
     process.gtReEmulDigis.GctInputTag  = cms.InputTag("gctReEmulDigis")
 
-#     ntuple.gctCentralJetsSource = cms.InputTag("gctReEmulDigis","cenJets")
-#     ntuple.gctNonIsoEmSource    = cms.InputTag("gctReEmulDigis","nonIsoEm")
-#     ntuple.gctForwardJetsSource = cms.InputTag("gctReEmulDigis","forJets")
-#     ntuple.gctIsoEmSource       = cms.InputTag("gctReEmulDigis","isoEm")
-#     ntuple.gctEnergySumsSource  = cms.InputTag("gctReEmulDigis","")
-#     ntuple.gctTauJetsSource     = cms.InputTag("gctReEmulDigis","tauJets")
-
-#     ntuple.gtSource = cms.InputTag("gtReEmulDigis")
-
     process.patchGct = cms.Sequence(
         process.ecalDigis
         + process.hcalDigis
-        #+ process.simHcalUnsuppressedDigis
         + process.hcalReEmulDigis
         + process.rctReEmulDigis
         + process.gctReEmulDigis
@@ -229,6 +217,21 @@ process.caloTowerAnalysis = cms.EDAnalyzer("CaloTowerAnalysis",
     )
 )
 
+from usercode.fabiocos.L1CaloAnalysis_cfi import stdl1CaloPset
+
+process.l1CaloAnalysis = cms.EDAnalyzer("L1CaloAnalysis",
+    stdl1CaloPset,
+    PUrew = cms.PSet(
+        puSummaryCollection = cms.untracked.InputTag("addPileupInfo","",""),
+        dataPUFile = cms.untracked.string("202299_truePileUpHisto.root"),
+        mcPUFile = cms.untracked.string("monitorPUSummaryInfo_histo.root"),
+        dataPUHisto = cms.untracked.string("pileup"),
+        mcPUHisto = cms.untracked.string("monitorPUSummaryInfo/nTruePU")
+    )
+)
+
+
+
 process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                       ,'FwkReport'
                                                       ,'FwkSummary'
@@ -253,12 +256,14 @@ process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(True)
 )
 
+
 #process.p = cms.Path(process.level1Pattern * process.hltHighLevel *
 #process.p = cms.Path(process.hltHighLevel *
 process.p = cms.Path(
                      process.primaryVertexFilter * process.noscraping *
                      process.HBHENoiseFilter * process.eeBadScFilter *
 #                     process.ecalDigis *
-                     process.patchGct * 
-                     process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis)
+                     process.patchGct *
+                     process.ecalMinBiasAnalysis * process.hcalMinBiasAnalysis * process.caloTowerAnalysis * process.l1CaloAnalysis)
 # in MC I don't include the process.hltHighLevel in the sequence
+
