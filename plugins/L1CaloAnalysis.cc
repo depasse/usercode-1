@@ -334,12 +334,12 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
     for (L1GctEtTotalCollection::const_iterator et = et_tots->begin();
          et != et_tots->end(); ++et) {
       if ( et->bx() == 0 ) {
-        if ( select ) L1ETTHisto_->Fill(et->et(),theWeight);
-        L1ETTVSvtx_->Fill((float)nVtx,et->et(),theWeight);
+        if ( select ) L1ETTHisto_->Fill(et->et()*0.5,theWeight);
+        L1ETTVSvtx_->Fill((float)nVtx,et->et()*0.5,theWeight);
         
         for ( int irank = 0; irank < nrankTh_; irank++ ) {
           float threshold = minRankTh_+(float)irank;
-          if ( et->et() > threshold ) { ETTRank_->Fill(threshold+0.5,theWeight); }
+          if ( et->et()*0.5 > threshold ) { ETTRank_->Fill(threshold+0.5,theWeight); }
           normaRank_->Fill(threshold+0.5,theWeight); 
         }
         
@@ -351,8 +351,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
     for (L1GctEtMissCollection::const_iterator et = et_misss->begin();
          et != et_misss->end(); ++et) {
       if ( et->bx() == 0 ) {
-        if ( select ) L1ETMHisto_->Fill(et->et(),theWeight);
-        L1ETMVSvtx_->Fill((float)nVtx,et->et(),theWeight);
+        if ( select ) L1ETMHisto_->Fill(et->et()*0.5,theWeight);
+        L1ETMVSvtx_->Fill((float)nVtx,et->et()*0.5,theWeight);
       }
     }
     
@@ -361,8 +361,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
     for (L1GctEtHadCollection::const_iterator et = et_hads->begin();
          et != et_hads->end(); ++et) {
       if ( et->bx() == 0 ) {
-        if ( select ) L1HTTHisto_->Fill(et->et(),theWeight);
-        L1HTTVSvtx_->Fill((float)nVtx,et->et(),theWeight);
+        if ( select ) L1HTTHisto_->Fill(et->et()*0.5,theWeight);
+        L1HTTVSvtx_->Fill((float)nVtx,et->et()*0.5,theWeight);
       }
     }
     
@@ -387,8 +387,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
     if ( nCRE > 0 ) { CREmultiHisto_->Fill(nCRE,theWeight); }
     if ( nCRF > 0 ) { CRFmultiHisto_->Fill(nCRF,theWeight); }
     if ( totSumBCR > 0. ) { CRBtotSumETHisto_->Fill(totSumBCR,theWeight); }
-    if ( totSumECR > 0. ) { CRBtotSumETHisto_->Fill(totSumECR,theWeight); }
-    if ( totSumFCR > 0. ) { CRBtotSumETHisto_->Fill(totSumFCR,theWeight); }
+    if ( totSumECR > 0. ) { CREtotSumETHisto_->Fill(totSumECR,theWeight); }
+    if ( totSumFCR > 0. ) { CRFtotSumETHisto_->Fill(totSumFCR,theWeight); }
   }
 
   if ( (int)nVtx <= numvtx ) {
