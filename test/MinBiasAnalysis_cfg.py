@@ -6,13 +6,22 @@ def patchGct(process) :
 
     process.load("Configuration.StandardSequences.RawToDigi_Data_cff")
 
+    process.load("SimCalorimetry.HcalSimProducers.hcalUnsuppressedDigis_cfi")
+    process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
+
     from L1Trigger.RegionalCaloTrigger.rctDigis_cfi import rctDigis
     from L1Trigger.GlobalCaloTrigger.gctDigis_cfi import gctDigis
     from L1Trigger.GlobalTrigger.gtDigis_cfi import gtDigis    
 
+    process.hcalReEmulDigis = process.simHcalTriggerPrimitiveDigis.clone()
     process.rctReEmulDigis  = rctDigis.clone()
     process.gctReEmulDigis  = gctDigis.clone()
     process.gtReEmulDigis   = gtDigis.clone()
+    
+    process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
+
+    process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
+    process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
     
     process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
     
@@ -22,6 +31,7 @@ def patchGct(process) :
     process.patchGct = cms.Sequence(
         process.ecalDigis
         + process.hcalDigis
+        + process.hcalReEmulDigis
         + process.rctReEmulDigis
         + process.gctReEmulDigis
         + process.gtReEmulDigis
