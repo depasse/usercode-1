@@ -106,9 +106,14 @@ private:
   // Trigger bits
 
   TH1F * L1TrigHisto_;
+  TH1F * L1TrigRateHisto_;
+  TH1F * L1TrigNorma_;
 
   TH1F * ETTRank_;
   TH1F * ETTEff_;
+
+  TH1F * HTTRank_;
+  TH1F * HTTEff_;
 
   TH1F * normaRank_;
 
@@ -175,6 +180,8 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   L1ETMVSvtx_ = fs->make<TProfile>( "L1ETMVSvtx", "L1 ETM VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
 
   L1TrigHisto_ = fs->make<TH1F>( "L1Trig", "L1 Trigger bits", 128, -.5, 127.5);
+  L1TrigRateHisto_ = fs->make<TH1F>( "L1TrigRate", "L1 Trigger bits rate", 128, -.5, 127.5);
+  L1TrigNorma_ = fs->make<TH1F>( "L1TrigNorma", "L1 Trigger bits normalization", 128, -.5, 127.5);
 
   float maxRankTh_ = minRankTh_+(float)nrankTh_ ;
 
@@ -182,6 +189,11 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   ETTRank_->Sumw2();
   ETTEff_ = fs->make<TH1F>( "ETTEff", "efficiency passing ETT threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
   ETTEff_->Sumw2();
+
+  HTTRank_ = fs->make<TH1F>( "HTTRank", "number of events passing HTT threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  HTTRank_->Sumw2();
+  HTTEff_ = fs->make<TH1F>( "HTTEff", "efficiency passing HTT threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  HTTEff_->Sumw2();
 
   normaRank_ = fs->make<TH1F>( "normaRank", "number of events with at least 1 vtx", nrankTh_, minRankTh_, maxRankTh_ ); 
   normaRank_->Sumw2();
@@ -363,6 +375,13 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       if ( et->bx() == 0 ) {
         if ( select ) L1HTTHisto_->Fill(et->et()*0.5,theWeight);
         L1HTTVSvtx_->Fill((float)nVtx,et->et()*0.5,theWeight);
+        
+        for ( int irank = 0; irank < nrankTh_; irank++ ) {
+          float threshold = minRankTh_+(float)irank;
+          if ( et->et()*0.5 > threshold ) { HTTRank_->Fill(threshold+0.5,theWeight); }
+          normaRank_->Fill(threshold+0.5,theWeight); 
+        }
+
       }
     }
     
@@ -371,14 +390,18 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       first_ = false;
       edm::ESHandle<L1GtTriggerMenu> l1menu;
       iSetup.get<L1GtTriggerMenuRcd>().get(l1menu);
-      for (const auto& p: l1menu->gtAlgorithmMap())
+      for (const auto& p: l1menu->gtAlgorithmMap()) {
         L1TrigHisto_->GetXaxis()->SetBinLabel(p.second.algoBitNumber() + 1, p.first.c_str());
+        L1TrigNorma_->GetXaxis()->SetBinLabel(p.second.algoBitNumber() + 1, p.first.c_str());
+      }
     }
     
     edm::Handle<L1GlobalTriggerReadoutRecord> bits;
     iEvent.getByLabel(l1TrigCollection_, bits);
-    for (int i = 0; i < 128; ++i)
+    for (int i = 0; i < 128; ++i) {
       L1TrigHisto_->Fill((float)i, bits->decisionWord()[i] * theWeight);
+      L1TrigNorma_->Fill((float)i, theWeight);
+    }
     
   }
   
@@ -403,6 +426,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
 void L1CaloAnalysis::endJob(){
 
   ETTEff_->Divide(ETTRank_,normaRank_,1.,1.,"B");
+  HTTEff_->Divide(HTTRank_,normaRank_,1.,1.,"B");
+  L1TrigRateHisto_->Divide(L1TrigHisto_,L1TrigNorma_,1.,1.,"B");
 
   return;
 

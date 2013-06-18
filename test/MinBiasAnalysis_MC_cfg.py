@@ -44,22 +44,35 @@ def patchGct(process) :
     process.rctReEmulDigis  = rctDigis.clone()
     process.gctReEmulDigis  = gctDigis.clone()
     process.gtReEmulDigis   = gtDigis.clone()
-    
-    process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
 
-    process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
-    process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
+    # Starting from RAW (just suppressed digis)
+    
+#    process.hcalReEmulDigis.inputLabel = cms.VInputTag(cms.InputTag('hcalDigis'), cms.InputTag('hcalDigis'))
+
+#    process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'ecalDigis:EcalTriggerPrimitives' ) )
+#    process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'hcalReEmulDigis' ) )
+
+# original from simulation ( if saved)
+    
+    process.rctReEmulDigis.ecalDigis = cms.VInputTag( cms.InputTag( 'simEcalTriggerPrimitiveDigis' ) )
+    process.rctReEmulDigis.hcalDigis = cms.VInputTag( cms.InputTag( 'simHcalTriggerPrimitiveDigis' ) )
 
     process.gctReEmulDigis.inputLabel  = cms.InputTag("rctReEmulDigis")
     
     process.gtReEmulDigis.GmtInputTag  = cms.InputTag("gtDigis")
     process.gtReEmulDigis.GctInputTag  = cms.InputTag("gctReEmulDigis")
 
+#     process.patchGct = cms.Sequence(
+#         process.ecalDigis
+#         + process.hcalDigis
+#         + process.hcalReEmulDigis
+#         + process.rctReEmulDigis
+#         + process.gctReEmulDigis
+#         + process.gtReEmulDigis
+#         )
+
     process.patchGct = cms.Sequence(
-        process.ecalDigis
-        + process.hcalDigis
-        + process.hcalReEmulDigis
-        + process.rctReEmulDigis
+        process.rctReEmulDigis
         + process.gctReEmulDigis
         + process.gtReEmulDigis
         )
