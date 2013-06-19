@@ -393,6 +393,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       for (const auto& p: l1menu->gtAlgorithmMap()) {
         L1TrigHisto_->GetXaxis()->SetBinLabel(p.second.algoBitNumber() + 1, p.first.c_str());
         L1TrigNorma_->GetXaxis()->SetBinLabel(p.second.algoBitNumber() + 1, p.first.c_str());
+        L1TrigRateHisto_->GetXaxis()->SetBinLabel(p.second.algoBitNumber() + 1, p.first.c_str());
       }
     }
     

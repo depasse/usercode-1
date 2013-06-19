@@ -263,7 +263,7 @@ root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1HTTVSvtx.pdf","l1CaloAnalysis","L1HTTVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigEff.pdf","l1CaloAnalysis","L1TrigEff",true,"E1",false,false,false,0.,0.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"BR")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,0.,0.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"BR")'
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTEff.pdf","l1CaloAnalysis","ETTEff",true,"E1",false,true,false,0.,0.,0.,0.,false,false,0.,0.,0.,0.,"BL")'
 
