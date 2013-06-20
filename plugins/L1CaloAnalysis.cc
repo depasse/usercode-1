@@ -180,8 +180,11 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   L1ETMVSvtx_ = fs->make<TProfile>( "L1ETMVSvtx", "L1 ETM VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
 
   L1TrigHisto_ = fs->make<TH1F>( "L1Trig", "L1 Trigger bits", 128, -.5, 127.5);
+  L1TrigHisto_->Sumw2();
   L1TrigRateHisto_ = fs->make<TH1F>( "L1TrigRate", "L1 Trigger bits rate", 128, -.5, 127.5);
+  L1TrigRateHisto_->Sumw2();
   L1TrigNorma_ = fs->make<TH1F>( "L1TrigNorma", "L1 Trigger bits normalization", 128, -.5, 127.5);
+  L1TrigNorma_->Sumw2();
 
   float maxRankTh_ = minRankTh_+(float)nrankTh_ ;
 
@@ -379,7 +382,6 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
         for ( int irank = 0; irank < nrankTh_; irank++ ) {
           float threshold = minRankTh_+(float)irank;
           if ( et->et()*0.5 > threshold ) { HTTRank_->Fill(threshold+0.5,theWeight); }
-          normaRank_->Fill(threshold+0.5,theWeight); 
         }
 
       }
