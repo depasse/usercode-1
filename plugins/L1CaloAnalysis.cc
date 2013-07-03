@@ -103,11 +103,16 @@ private:
   TProfile* L1HTTVSvtx_;
   TProfile* L1ETMVSvtx_;
 
+  TProfile* L1CRsumVSvtx_;
+
   // Trigger bits
 
   TH1F * L1TrigHisto_;
   TH1F * L1TrigRateHisto_;
   TH1F * L1TrigNorma_;
+
+  TH1F* CRsumRank_;
+  TH1F* CRsumEff_;
 
   TH1F * ETTRank_;
   TH1F * ETTEff_;
@@ -179,6 +184,8 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   L1HTTVSvtx_ = fs->make<TProfile>( "L1HTTVSvtx", "L1 HTT VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
   L1ETMVSvtx_ = fs->make<TProfile>( "L1ETMVSvtx", "L1 ETM VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
 
+  L1CRsumVSvtx_ = fs->make<TProfile>( "L1CRsumVSvtx", "L1 CaloRegion sum VS Vtx", numvtx, 0., (float)numvtx, 0., 1000.); 
+
   L1TrigHisto_ = fs->make<TH1F>( "L1Trig", "L1 Trigger bits", 128, -.5, 127.5);
   L1TrigHisto_->Sumw2();
   L1TrigRateHisto_ = fs->make<TH1F>( "L1TrigRate", "L1 Trigger bits rate", 128, -.5, 127.5);
@@ -187,6 +194,11 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   L1TrigNorma_->Sumw2();
 
   float maxRankTh_ = minRankTh_+(float)nrankTh_ ;
+
+  CRsumRank_ = fs->make<TH1F>( "CRsumRank", "number of events passing CRsum threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  CRsumRank_->Sumw2();
+  CRsumEff_ = fs->make<TH1F>( "CRsumEff", "efficiency passing CRsum threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
+  CRsumEff_->Sumw2();
 
   ETTRank_ = fs->make<TH1F>( "ETTRank", "number of events passing ETT threshold", nrankTh_, minRankTh_, maxRankTh_  ); 
   ETTRank_->Sumw2();
@@ -284,6 +296,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
   double totSumBCR = 0.;
   double totSumECR = 0.;
   double totSumFCR = 0.;
+
+  double totSumCR = 0.;
   
   int nCRB =0;
   int nCRE= 0;
@@ -294,7 +308,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
   for (L1CaloRegionCollection::const_iterator r = towers->begin(); r != towers->end() ; ++r) {
 
     int ieta = r->gctEta();
-    double rET = r->et();
+    double rET = 0.5*r->et();
 
     bool eneSelect( rET >= etTh_ );
 
@@ -323,6 +337,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       }
       if ( (int)nVtx <= numvtx ) {
         sumECR[nVtx] += rET; 
+        totSumCR += rET;
       }
     } 
 
@@ -336,6 +351,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       }
       if ( (int)nVtx <= numvtx ) {
         sumBCR[nVtx] += rET; 
+        totSumCR += rET;
       }
     }    
 
@@ -343,6 +359,13 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
   }
 
   if ( nVtx > 0 ) {
+
+    L1CRsumVSvtx_->Fill((float)nVtx,totSumCR,theWeight);
+    for ( int irank = 0; irank < nrankTh_; irank++ ) {
+      float threshold = minRankTh_+(float)irank;
+      if ( totSumCR > threshold ) { CRsumRank_->Fill(threshold+0.5,theWeight); }
+      normaRank_->Fill(threshold+0.5,theWeight); 
+    }
 
     edm::Handle<L1GctEtTotalCollection> et_tots;
     iEvent.getByLabel(ettCollection_, et_tots);
@@ -355,7 +378,6 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
         for ( int irank = 0; irank < nrankTh_; irank++ ) {
           float threshold = minRankTh_+(float)irank;
           if ( et->et()*0.5 > threshold ) { ETTRank_->Fill(threshold+0.5,theWeight); }
-          normaRank_->Fill(threshold+0.5,theWeight); 
         }
         
       }
@@ -428,6 +450,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
 
 void L1CaloAnalysis::endJob(){
 
+  CRsumEff_->Divide(CRsumRank_,normaRank_,1.,1.,"B");
   ETTEff_->Divide(ETTRank_,normaRank_,1.,1.,"B");
   HTTEff_->Divide(HTTRank_,normaRank_,1.,1.,"B");
   L1TrigRateHisto_->Divide(L1TrigHisto_,L1TrigNorma_,1.,1.,"B");
