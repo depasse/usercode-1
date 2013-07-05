@@ -257,11 +257,15 @@ root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1HTT.pdf","l1CaloAnalysis","L1HTT",true,"E1",false,true,false,0.,300.,0.,0.,true,false,7070.,13100.,33570.,33570.,"BR")'
 
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1CRsumVSvtx.pdf","l1CaloAnalysis","L1CRsumVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1ETTVSvtx.pdf","l1CaloAnalysis","L1ETTVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1ETMVSvtx.pdf","l1CaloAnalysis","L1ETMVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1HTTVSvtx.pdf","l1CaloAnalysis","L1HTTVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","CRsumEff.pdf","l1CaloAnalysis","CRsumEff",true,"E1",false,true,false,0.,0.,0.,0.,false,false,0.,0.,0.,0.,"BL")'
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTEff.pdf","l1CaloAnalysis","ETTEff",true,"E1",false,true,false,0.,0.,0.,0.,false,false,0.,0.,0.,0.,"BL")'
 
@@ -269,16 +273,16 @@ root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,0.,0.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_0_20.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,0.,20.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_0_20.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,0.,20.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_21_40.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,20.,40.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_21_40.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,20.,40.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_41_60.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,40.,60.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_41_60.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,40.,60.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_61_80.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,60.,80.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_61_80.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,60.,80.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_81_100.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,80.,100.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_81_100.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,80.,100.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_101_120.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,100.,120.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_101_120.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,100.,120.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
-root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_121_128.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,false,false,120.,129.,0.,1.5,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_121_128.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,120.,129.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
