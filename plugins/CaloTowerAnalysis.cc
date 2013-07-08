@@ -60,6 +60,7 @@ private:
   edm::InputTag caloTowerCollection_; 
 
   int vtxSel_;
+  bool   cutEt_;
   double etTh_,etEmTh_,etHadTh_;
   
   TH1F * hvtxHisto_;
@@ -173,6 +174,7 @@ CaloTowerAnalysis::CaloTowerAnalysis(const edm::ParameterSet& iPSet):
   recoVertexCollection_(iPSet.getParameter<edm::InputTag>("recoVertexCollection")),
   caloTowerCollection_(iPSet.getParameter<edm::InputTag>("caloTowerCollection")),
   vtxSel_(iPSet.getParameter<int>("vtxSel")),
+  cutEt_(iPSet.getParameter<bool>("cutEt")),
   etTh_(iPSet.getParameter<double>("etTh")),
   etEmTh_(iPSet.getParameter<double>("etEmTh")),
   etHadTh_(iPSet.getParameter<double>("etHadTh")),
@@ -406,6 +408,9 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     //    std::cout << "CT ET     " << emET << " " << hadET << " " << totET << std::endl; 
 
     bool eneSelect(totET >= etTh_ && emET >= etEmTh_ && hadET >= etHadTh_);
+    if ( ! cutEt_ ) { eneSelect = totE >= etTh_ && emE >= etEmTh_ && hadE >= etHadTh_ ; }
+
+    //    std::cout << "cutEt = " << cutEt_ << " eneSelect = " << eneSelect << std::endl;
 
     if ( ! eneSelect) { continue; }
 
