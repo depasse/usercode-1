@@ -259,9 +259,10 @@ process.MessageLogger.cerr.EcalMinimumBiasInfo = cms.untracked.PSet(limit = cms.
 process.MessageLogger.cerr.HcalMinimumBiasInfo = cms.untracked.PSet(limit = cms.untracked.int32(-1))
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(10000)
 
+process.caloTowerAnalysis.cutEt = cms.bool(True)
 process.caloTowerAnalysis.etTh = cms.double(1.)
-process.caloTowerAnalysis.etEmTh = cms.double(0.)
-process.caloTowerAnalysis.etHadTh = cms.double(0.)
+process.caloTowerAnalysis.etEmTh = cms.double(-999.)
+process.caloTowerAnalysis.etHadTh = cms.double(-999.)
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("MinBiasAnalysis_MC_histo.root") )
 
