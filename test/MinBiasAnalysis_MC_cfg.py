@@ -263,6 +263,9 @@ process.caloTowerAnalysis.cutEt = cms.bool(True)
 process.caloTowerAnalysis.etTh = cms.double(1.)
 process.caloTowerAnalysis.etEmTh = cms.double(-999.)
 process.caloTowerAnalysis.etHadTh = cms.double(-999.)
+process.l1CaloAnalysis.etTh = cms.double(0.)
+process.l1CaloAnalysis.cutCTEt = cms.bool(True)
+process.l1CaloAnalysis.etCTTh = cms.double(1.)
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("MinBiasAnalysis_MC_histo.root") )
 

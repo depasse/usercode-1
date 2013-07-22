@@ -35,6 +35,10 @@
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetupFwd.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/CaloTowers/interface/CaloTowerDetId.h"
+#include "DataFormats/CaloTowers/interface/CaloTowerCollection.h"
+
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
@@ -67,9 +71,12 @@ private:
   edm::InputTag httCollection_; 
   edm::InputTag etmCollection_; 
   edm::InputTag l1TrigCollection_;
+  edm::InputTag caloTowerCollection_; 
 
   int vtxSel_;
   double etTh_;
+  bool   cutCTEt_;
+  double etCTTh_;
   
   TH1F * hvtxHisto_;
 
@@ -122,6 +129,12 @@ private:
 
   TH1F * normaRank_;
 
+  TProfile * ETTCTdiffVSvtx_;
+  TProfile * ETTBarrelCTdiffVSvtx_;
+  TProfile * ETTEndcapCTdiffVSvtx_;
+  TProfile * ETTForwardCTdiffVSvtx_;
+  TH2F *     ETTvsCT_;
+
   const int numvtx;
   const int nrankTh_;
   const float minRankTh_;
@@ -149,8 +162,11 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
   httCollection_(iPSet.getParameter<edm::InputTag>("httCollection")),
   etmCollection_(iPSet.getParameter<edm::InputTag>("etmCollection")),
   l1TrigCollection_(iPSet.getParameter<edm::InputTag>("l1TrigCollection")),
+  caloTowerCollection_(iPSet.getParameter<edm::InputTag>("caloTowerCollection")),
   vtxSel_(iPSet.getParameter<int>("vtxSel")),
   etTh_(iPSet.getParameter<double>("etTh")),
+  cutCTEt_(iPSet.getParameter<bool>("cutCTEt")),
+  etCTTh_(iPSet.getParameter<double>("etCTTh")),
   numvtx(60),nrankTh_(300),minRankTh_(10.),first_(true)
 {    
 
@@ -212,6 +228,14 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
 
   normaRank_ = fs->make<TH1F>( "normaRank", "number of events with at least 1 vtx", nrankTh_, minRankTh_, maxRankTh_ ); 
   normaRank_->Sumw2();
+
+  // Cross check with CaloTowers
+
+  ETTCTdiffVSvtx_ = fs->make<TProfile>( "ETTCTdiffVSvtx", "difference ETT - sumET CaloTowers VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
+  ETTBarrelCTdiffVSvtx_ = fs->make<TProfile>( "ETTBarrelCTdiffVSvtx", "difference ETT - sumET CaloTowers Barrel VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
+  ETTEndcapCTdiffVSvtx_ = fs->make<TProfile>( "ETTEndcapCTdiffVSvtx", "difference ETT - sumET CaloTowers Endcap VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
+  ETTForwardCTdiffVSvtx_ = fs->make<TProfile>( "ETTForwardCTdiffVSvtx", "difference ETT - sumET CaloTowers Forward VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
+  ETTvsCT_ = fs->make<TH2F>( "ETTvsCT", "ETT vs sumET CaloTowers", 40, 0., 400., 40, 0., 400. ); 
 
   // Luminosity reweighting for simulation
 
@@ -298,6 +322,9 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
   double totSumFCR = 0.;
 
   double totSumCR = 0.;
+  double totBASumCR = 0.;
+  double totENSumCR = 0.;
+  double totFOSumCR = 0.;
   
   int nCRB =0;
   int nCRE= 0;
@@ -324,6 +351,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       }
       if ( (int)nVtx <= numvtx ) {
         sumFCR[nVtx] += rET; 
+        totFOSumCR += rET;
       }
     } 
     
@@ -338,6 +366,7 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       if ( (int)nVtx <= numvtx ) {
         sumECR[nVtx] += rET; 
         totSumCR += rET;
+        totENSumCR += rET;
       }
     } 
 
@@ -352,15 +381,72 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       if ( (int)nVtx <= numvtx ) {
         sumBCR[nVtx] += rET; 
         totSumCR += rET;
+        totBASumCR += rET;
       }
     }    
 
 
   }
 
+  // CaloTower analysis for comparison with Offline quantities
+
+  edm::Handle<CaloTowerCollection> CTtowers;
+  iEvent.getByLabel(caloTowerCollection_,CTtowers);
+  CaloTowerCollection::const_iterator cal;
+
+  double totSumCT = 0.;
+  double totBASumCT = 0.;
+  double totENSumCT = 0.;
+  double totFOSumCT = 0.;
+
+  for (CaloTowerCollection::const_iterator cal = CTtowers->begin(); cal != CTtowers->end() ; ++cal) {
+
+    double totE = cal->energy();
+    double totET = cal->et();
+
+    //    std::cout << "CT Energy " << emE << " " << hadE << " " << totE << std::endl; 
+    //    std::cout << "CT ET     " << emET << " " << hadET << " " << totET << std::endl; 
+
+    bool eneCTSelect(totET >= etCTTh_ );
+    if ( ! cutCTEt_ ) { eneCTSelect = totE >= etCTTh_ ; }
+
+    //    std::cout << "cutEt = " << cutEt_ << " eneSelect = " << eneSelect << std::endl;
+
+    if ( ! eneCTSelect) { continue; }
+
+    if ( std::fabs(cal->eta()) <= 3. && nVtx > 0 ) {
+      if ( (int)nVtx <= numvtx ) {
+        totSumCT += totET; 
+      }
+    }
+    
+    if ( std::fabs(cal->eta()) <= 1.48 ) {
+      if ( (int)nVtx <= numvtx ) {
+        totBASumCT += totET; 
+      }
+    }
+    else if ( std::fabs(cal->eta()) > 1.48 && std::fabs(cal->eta()) <= 3.) {
+      if ( (int)nVtx <= numvtx ) {
+        totENSumCT += totET; 
+      }
+    }
+    else {
+      if ( (int)nVtx <= numvtx ) {
+        totFOSumCT += totET; 
+      }
+    }
+
+  }
+
+
   if ( nVtx > 0 ) {
 
     L1CRsumVSvtx_->Fill((float)nVtx,totSumCR,theWeight);
+    ETTCTdiffVSvtx_->Fill((float)nVtx,totSumCR-totSumCT,theWeight);
+    ETTvsCT_->Fill(totSumCT,totSumCR,theWeight);
+    ETTBarrelCTdiffVSvtx_->Fill((float)nVtx,totBASumCR-totBASumCT,theWeight);
+    ETTEndcapCTdiffVSvtx_->Fill((float)nVtx,totENSumCR-totENSumCT,theWeight);
+    ETTForwardCTdiffVSvtx_->Fill((float)nVtx,totFOSumCR-totFOSumCT,theWeight);
     for ( int irank = 0; irank < nrankTh_; irank++ ) {
       float threshold = minRankTh_+(float)irank;
       if ( totSumCR > threshold ) { CRsumRank_->Fill(threshold+0.5,theWeight); }

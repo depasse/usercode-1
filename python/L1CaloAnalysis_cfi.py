@@ -7,8 +7,11 @@ stdl1CaloPset = cms.PSet(
     httCollection = cms.InputTag("gctReEmulDigis"),
     etmCollection = cms.InputTag("gctReEmulDigis"),
     l1TrigCollection = cms.InputTag("gtReEmulDigis"),
+    caloTowerCollection = cms.InputTag("towerMaker"),
     vtxSel = cms.int32(20),
-    etTh = cms.double(1.)
+    etTh = cms.double(0.),
+    cutCTEt = cms.bool(True),
+    etCTTh = cms.double(1.)
 )
 
 l1CaloAnalysis = cms.EDAnalyzer("L1CaloAnalysis",
