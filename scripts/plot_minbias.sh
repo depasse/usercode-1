@@ -286,3 +286,13 @@ root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_101_120.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,100.,120.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","L1TrigRate_121_128.pdf","l1CaloAnalysis","L1TrigRate",true,"E1",false,true,false,120.,129.,0.,0.,false,false,0.00000895,0.000005,0.000005,33570.,"TL")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTCTdiffVSvtx.pdf","l1CaloAnalysis","ETTCTdiffVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTBarrelCTdiffVSvtx.pdf","l1CaloAnalysis","ETTBarrelCTdiffVSvtx",false,"E1",false,false,false,0.,0.,-20.,20.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTEndcapCTdiffVSvtx.pdf","l1CaloAnalysis","ETTEndcapCTdiffVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTForwardCTdiffVSvtx.pdf","l1CaloAnalysis","ETTForwardCTdiffVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","ETTvsCT.pdf","l1CaloAnalysis","ETTvsCT",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
