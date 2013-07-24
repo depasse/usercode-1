@@ -195,6 +195,12 @@ root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","CTtotEff.pdf","caloTowerAnalysis","CTtotEff",true,"E1",false,true,false,0.,0.,0.,0.,false,false,0.,0.,0.,0.,"BL")'
 
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","CTemSumETVSvtx.pdf","caloTowerAnalysis","CTemSumETVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","CThadSumETVSvtx.pdf","caloTowerAnalysis","CThadSumETVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
+root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","CTtotSumETVSvtx.pdf","caloTowerAnalysis","CTtotSumETVSvtx",false,"E1",false,false,false,0.,0.,0.,0.,false,false,1.,1.,1.,1.,"BR")'
+
 
 root -l -q -b 'compareMulti.C(3,"one.root","run 202299 all","two.root","Summer12 PU -300 ns","three.root","Summer12 best","four.root","Summer12 PU -300 ns","CTBtmulti.pdf","caloTowerAnalysis","CTBtmulti",true,"E1",false,false,false,0.,0.,0.,0.,true,false,-1.,-1.,-1.,-1.,"BR")'
 
