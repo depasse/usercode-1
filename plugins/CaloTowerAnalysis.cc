@@ -516,6 +516,7 @@ void CaloTowerAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& 
     if ( sumEmET[nVtx] > 0. ) { CTemSumETVSvtx_->Fill((float)nVtx,sumEmET[nVtx],theWeight); }
     if ( sumHadET[nVtx] > 0. ) { CThadSumETVSvtx_->Fill((float)nVtx,sumHadET[nVtx],theWeight); }
     if ( sumTotET[nVtx] > 0. ) { CTtotSumETVSvtx_->Fill((float)nVtx,sumTotET[nVtx],theWeight); }
+    //    std::cout << "CT: sumTotET[nVtx] = " << sumTotET[nVtx] << std::endl; 
   }
     
   if (nVtx > 0 ) {

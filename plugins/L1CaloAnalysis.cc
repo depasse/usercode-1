@@ -231,10 +231,10 @@ L1CaloAnalysis::L1CaloAnalysis(const edm::ParameterSet& iPSet):
 
   // Cross check with CaloTowers
 
-  ETTCTdiffVSvtx_ = fs->make<TProfile>( "ETTCTdiffVSvtx", "difference ETT - sumET CaloTowers VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
-  ETTBarrelCTdiffVSvtx_ = fs->make<TProfile>( "ETTBarrelCTdiffVSvtx", "difference ETT - sumET CaloTowers Barrel VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
-  ETTEndcapCTdiffVSvtx_ = fs->make<TProfile>( "ETTEndcapCTdiffVSvtx", "difference ETT - sumET CaloTowers Endcap VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
-  ETTForwardCTdiffVSvtx_ = fs->make<TProfile>( "ETTForwardCTdiffVSvtx", "difference ETT - sumET CaloTowers Forward VS Vtx ", numvtx, 0., (float)numvtx, -100., 100.);
+  ETTCTdiffVSvtx_ = fs->make<TProfile>( "ETTCTdiffVSvtx", "difference ETT - sumET CaloTowers VS Vtx ", numvtx, 0., (float)numvtx, -200., 100.);
+  ETTBarrelCTdiffVSvtx_ = fs->make<TProfile>( "ETTBarrelCTdiffVSvtx", "difference ETT - sumET CaloTowers Barrel VS Vtx ", numvtx, 0., (float)numvtx, -200., 100.);
+  ETTEndcapCTdiffVSvtx_ = fs->make<TProfile>( "ETTEndcapCTdiffVSvtx", "difference ETT - sumET CaloTowers Endcap VS Vtx ", numvtx, 0., (float)numvtx, -200., 100.);
+  ETTForwardCTdiffVSvtx_ = fs->make<TProfile>( "ETTForwardCTdiffVSvtx", "difference ETT - sumET CaloTowers Forward VS Vtx ", numvtx, 0., (float)numvtx, -200., 100.);
   ETTvsCT_ = fs->make<TH2F>( "ETTvsCT", "ETT vs sumET CaloTowers", 40, 0., 400., 40, 0., 400. ); 
 
   // Luminosity reweighting for simulation
@@ -441,6 +441,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
 
   if ( nVtx > 0 ) {
 
+    //    std::cout << "L1: totSumCR = " << totSumCR << " totSumCT = " << totSumCT << std::endl;
+
     L1CRsumVSvtx_->Fill((float)nVtx,totSumCR,theWeight);
     ETTCTdiffVSvtx_->Fill((float)nVtx,totSumCR-totSumCT,theWeight);
     ETTvsCT_->Fill(totSumCT,totSumCR,theWeight);
@@ -460,7 +462,8 @@ void L1CaloAnalysis::analyze(const edm::Event& iEvent,const edm::EventSetup& iSe
       if ( et->bx() == 0 ) {
         if ( select ) L1ETTHisto_->Fill(et->et()*0.5,theWeight);
         L1ETTVSvtx_->Fill((float)nVtx,et->et()*0.5,theWeight);
-        
+        //        std::cout << "L1: ETT = " << et->et()*0.5 << std::endl; 
+
         for ( int irank = 0; irank < nrankTh_; irank++ ) {
           float threshold = minRankTh_+(float)irank;
           if ( et->et()*0.5 > threshold ) { ETTRank_->Fill(threshold+0.5,theWeight); }
